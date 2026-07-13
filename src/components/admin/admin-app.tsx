@@ -396,7 +396,7 @@ function NoAdminAccess({
         <p className="mt-3 text-sm leading-6 text-stone-600">
           当前已登录：{userEmail}。这个账号还没有写入
           <code className="mx-1 rounded bg-stone-100 px-1.5 py-0.5">
-            admin_profiles
+            admin_profiles / admin_emails
           </code>
           。
         </p>
@@ -462,15 +462,26 @@ export function AdminApp() {
     let mounted = true;
     async function checkAdmin() {
       setCheckingAdmin(true);
-      const { data, error } = await client
+      const adminProfileQuery = client
         .from("admin_profiles")
         .select("user_id")
         .eq("user_id", currentUser.id)
         .maybeSingle();
+      const adminEmailQuery = currentUser.email
+        ? client
+            .from("admin_emails")
+            .select("email")
+            .eq("email", currentUser.email.toLowerCase())
+            .maybeSingle()
+        : Promise.resolve({ data: null, error: null });
+      const [profileResult, emailResult] = await Promise.all([
+        adminProfileQuery,
+        adminEmailQuery,
+      ]);
 
-        if (!mounted) return;
-        setIsAdmin(Boolean(data && !error));
-        setCheckingAdmin(false);
+      if (!mounted) return;
+      setIsAdmin(Boolean(profileResult.data || emailResult.data));
+      setCheckingAdmin(false);
     }
 
     void checkAdmin();

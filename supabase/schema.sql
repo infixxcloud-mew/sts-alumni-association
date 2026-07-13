@@ -5,6 +5,12 @@ create table if not exists public.admin_profiles (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.admin_emails (
+  email text primary key,
+  created_at timestamptz not null default now(),
+  constraint admin_emails_lowercase check (email = lower(email))
+);
+
 create table if not exists public.cms_media (
   id uuid primary key default gen_random_uuid(),
   title text not null default '',
@@ -83,6 +89,7 @@ before update on public.cms_content
 for each row execute function public.set_updated_at();
 
 alter table public.admin_profiles enable row level security;
+alter table public.admin_emails enable row level security;
 alter table public.cms_media enable row level security;
 alter table public.cms_albums enable row level security;
 alter table public.cms_album_photos enable row level security;
@@ -94,6 +101,13 @@ on public.admin_profiles
 for select
 to authenticated
 using (user_id = auth.uid());
+
+drop policy if exists "Admins can read own admin email" on public.admin_emails;
+create policy "Admins can read own admin email"
+on public.admin_emails
+for select
+to authenticated
+using (email = lower(auth.jwt() ->> 'email'));
 
 drop policy if exists "Public can read cms media" on public.cms_media;
 create policy "Public can read cms media"
@@ -108,15 +122,36 @@ create policy "Admins can insert cms media"
 on public.cms_media
 for insert
 to authenticated
-with check (exists (select 1 from public.admin_profiles where user_id = auth.uid()));
+with check (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+);
 
 drop policy if exists "Admins can update cms media" on public.cms_media;
 create policy "Admins can update cms media"
 on public.cms_media
 for update
 to authenticated
-using (exists (select 1 from public.admin_profiles where user_id = auth.uid()))
-with check (exists (select 1 from public.admin_profiles where user_id = auth.uid()));
+using (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+)
+with check (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+);
 
 drop policy if exists "Public can read published albums" on public.cms_albums;
 create policy "Public can read published albums"
@@ -131,22 +166,50 @@ create policy "Admins can read albums"
 on public.cms_albums
 for select
 to authenticated
-using (exists (select 1 from public.admin_profiles where user_id = auth.uid()));
+using (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+);
 
 drop policy if exists "Admins can insert albums" on public.cms_albums;
 create policy "Admins can insert albums"
 on public.cms_albums
 for insert
 to authenticated
-with check (exists (select 1 from public.admin_profiles where user_id = auth.uid()));
+with check (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+);
 
 drop policy if exists "Admins can update albums" on public.cms_albums;
 create policy "Admins can update albums"
 on public.cms_albums
 for update
 to authenticated
-using (exists (select 1 from public.admin_profiles where user_id = auth.uid()))
-with check (exists (select 1 from public.admin_profiles where user_id = auth.uid()));
+using (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+)
+with check (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+);
 
 drop policy if exists "Public can read published album photos" on public.cms_album_photos;
 create policy "Public can read published album photos"
@@ -168,22 +231,50 @@ create policy "Admins can read album photos"
 on public.cms_album_photos
 for select
 to authenticated
-using (exists (select 1 from public.admin_profiles where user_id = auth.uid()));
+using (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+);
 
 drop policy if exists "Admins can insert album photos" on public.cms_album_photos;
 create policy "Admins can insert album photos"
 on public.cms_album_photos
 for insert
 to authenticated
-with check (exists (select 1 from public.admin_profiles where user_id = auth.uid()));
+with check (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+);
 
 drop policy if exists "Admins can update album photos" on public.cms_album_photos;
 create policy "Admins can update album photos"
 on public.cms_album_photos
 for update
 to authenticated
-using (exists (select 1 from public.admin_profiles where user_id = auth.uid()))
-with check (exists (select 1 from public.admin_profiles where user_id = auth.uid()));
+using (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+)
+with check (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+);
 
 drop policy if exists "Public can read published content" on public.cms_content;
 create policy "Public can read published content"
@@ -198,22 +289,54 @@ create policy "Admins can read content"
 on public.cms_content
 for select
 to authenticated
-using (exists (select 1 from public.admin_profiles where user_id = auth.uid()));
+using (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+);
 
 drop policy if exists "Admins can insert content" on public.cms_content;
 create policy "Admins can insert content"
 on public.cms_content
 for insert
 to authenticated
-with check (exists (select 1 from public.admin_profiles where user_id = auth.uid()));
+with check (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+);
 
 drop policy if exists "Admins can update content" on public.cms_content;
 create policy "Admins can update content"
 on public.cms_content
 for update
 to authenticated
-using (exists (select 1 from public.admin_profiles where user_id = auth.uid()))
-with check (exists (select 1 from public.admin_profiles where user_id = auth.uid()));
+using (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+)
+with check (
+  exists (select 1 from public.admin_profiles where user_id = auth.uid())
+  or exists (
+    select 1
+    from public.admin_emails
+    where email = lower(auth.jwt() ->> 'email')
+  )
+);
+
+insert into public.admin_emails (email)
+values ('infixxcloud@gmail.com')
+on conflict (email) do nothing;
 
 -- Media files are stored in Cloudflare R2. Supabase stores only the public URL
 -- and metadata in public.cms_media.

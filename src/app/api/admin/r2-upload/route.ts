@@ -60,13 +60,26 @@ export async function POST(request: Request) {
 
   if (userError || !user) return jsonError("Invalid admin session.", 401);
 
-  const { data: adminProfile, error: adminError } = await supabase
+  const adminProfileQuery = supabase
     .from("admin_profiles")
     .select("user_id")
     .eq("user_id", user.id)
     .maybeSingle();
+  const adminEmailQuery = user.email
+    ? supabase
+        .from("admin_emails")
+        .select("email")
+        .eq("email", user.email.toLowerCase())
+        .maybeSingle()
+    : Promise.resolve({ data: null, error: null });
+  const [adminProfile, adminEmail] = await Promise.all([
+    adminProfileQuery,
+    adminEmailQuery,
+  ]);
 
-  if (adminError || !adminProfile) return jsonError("Admin permission required.", 403);
+  if (!adminProfile.data && !adminEmail.data) {
+    return jsonError("Admin permission required.", 403);
+  }
 
   const formData = await request.formData();
   const file = formData.get("file");
