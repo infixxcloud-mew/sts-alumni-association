@@ -68,19 +68,23 @@ export function LegacyPageBanner({
   title,
   crumb,
   image = "/legacy-theme/images/about-banner.JPG",
+  bannerClassName = "pt-105 pb-110 bg_cover",
+  positionY = "63%",
 }: {
   title: string;
   crumb: string;
   image?: string;
+  bannerClassName?: string;
+  positionY?: string;
 }) {
   return (
     <section
       id="page-banner"
-      className="pt-105 pb-110 bg_cover"
+      className={bannerClassName}
       data-overlay="6"
       style={{
         backgroundImage: `url(${image})`,
-        backgroundPositionY: "63%",
+        backgroundPositionY: positionY,
       }}
     >
       <div className="container">

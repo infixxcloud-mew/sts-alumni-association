@@ -76,3 +76,77 @@ test("keeps partner logos at their legacy intrinsic image size", async () => {
     /<Image src=\{image\} alt="Logo" width=\{180\} height=\{100\}/,
   );
 });
+
+test("routes public static pages to their original WordPress layouts", async () => {
+  const [listPages, shell, navigation] = await Promise.all([
+    readFile(resolve("src/components/legacy/legacy-list-pages.tsx"), "utf8"),
+    readFile(resolve("src/components/legacy/legacy-shell.tsx"), "utf8"),
+    readFile(resolve("src/components/legacy/legacy-nav.tsx"), "utf8"),
+  ]);
+
+  assert.match(shell, /bannerClassName = "pt-105 pb-110 bg_cover"/);
+  assert.match(shell, /positionY = "63%"/);
+  assert.match(listPages, /function LegacySponsorPage/);
+  assert.match(listPages, /function LegacyEducationFoundationPage/);
+  assert.match(listPages, /function LegacyEducationContributionPage/);
+  assert.match(listPages, /function LegacyEducationSponsorPage/);
+  assert.match(listPages, /page\.slug === "sponsor"[\s\S]*?<LegacySponsorPage/);
+  assert.match(listPages, /page\.slug === "education-foundation"[\s\S]*?<LegacyEducationFoundationPage/);
+  assert.match(listPages, /page\.slug === "education-foundation-contribution"[\s\S]*?<LegacyEducationContributionPage/);
+  assert.match(listPages, /page\.slug === "education-foundation-sponsor"[\s\S]*?<LegacyEducationSponsorPage/);
+  assert.match(navigation, /<a\s+href=\{item\.href\}/);
+  assert.doesNotMatch(navigation, /import Link from "next\/link"/);
+});
+
+test("keeps listing pages in the original WordPress card structures", async () => {
+  const listPages = await readFile(resolve("src/components/legacy/legacy-list-pages.tsx"), "utf8");
+
+  assert.match(listPages, /<LegacyPageBanner title="全部通告" crumb="通告" image="\/legacy-theme\/images\/hcom3\.jpg" bannerClassName="pt-105 pb-130 bg_cover" positionY="15%" \/>/);
+  assert.match(listPages, /<LegacyPageBanner title="全部回忆" crumb="回忆" image="\/legacy-theme\/images\/memory-banner\.jpg" positionY="83%" \/>/);
+  assert.match(listPages, /<LegacyPageBanner title="全部相册" crumb="相册" image="\/legacy-theme\/images\/gallery-banner\.jpg" positionY="15%" \/>/);
+  assert.match(listPages, /<section id="courses-part" className="pt-120 pb-120 gray-bg">/);
+  assert.doesNotMatch(listPages, /id="gallery-list"/);
+  assert.match(listPages, /<div className="courses-top-search">/);
+  assert.match(listPages, /id="myTab" role="tablist"/);
+  assert.match(listPages, /显示\{albums\.length\}个相册的其中的\{visibleAlbums\.length\}个/);
+  assert.match(listPages, /name="year_sts" placeholder="按年份搜索 \| 例子:2023"/);
+  assert.match(listPages, /<div className="col-lg-6" key=\{item\.id\}>[\s\S]*?<LegacyMemoryListItem/);
+  assert.match(listPages, /iconText\("fa-calendar"/);
+  assert.match(listPages, /iconText\("fa-clock-o"/);
+  assert.match(listPages, /iconText\("fa-map-marker"/);
+  assert.match(listPages, /<div className="saidbar-search mt-30">/);
+  assert.match(listPages, /<div className="singel-post">/);
+  assert.match(listPages, /const legacyCategoryOrder = \["活动", "奖励金", "周年活动"\]/);
+  assert.match(listPages, /<img src=\{item\.image\?\.fullSrc \|\| image\} alt=\{item\.title\} \/>/);
+  assert.doesNotMatch(listPages, /width=\{770\}[\s\S]*?height=\{430\}/);
+  assert.match(listPages, /justify-content-lg-end justify-content-center/);
+  assert.match(listPages, /&laquo; Previous/);
+  assert.match(listPages, /Next &raquo;/);
+});
+
+test("keeps sponsor, education, and contact pages on their original WordPress markup", async () => {
+  const [listPages, stylesheet] = await Promise.all([
+    readFile(resolve("src/components/legacy/legacy-list-pages.tsx"), "utf8"),
+    readFile(resolve("src/app/globals.css"), "utf8"),
+  ]);
+
+  assert.match(listPages, /id="prior-sponsor" className="container-fluid pt-50 gray-bg"/);
+  assert.match(listPages, /Ads_ \(3\)\.JPG/);
+  assert.match(listPages, /Ads_ \(15\)\.JPG/);
+  assert.match(listPages, /id="sponsor-photo" className="pt-90 pb-120 gray-bg"/);
+  assert.match(listPages, /mediaTitle\("sponsor-list"\)/);
+  assert.match(listPages, /title="泗里街高级\(华侨\)中学教育基金委员会" crumb="教育基金" image="\/legacy-theme\/images\/edu-committee\.png"/);
+  assert.match(listPages, /title="教育基金\/校友卓越贡献" crumb="教育基金\/校友贡献" image="\/legacy-theme\/images\/edu-sponsor\.png"/);
+  assert.match(listPages, /title="母校筑梦之路赞助者" crumb="赞助者" image="\/legacy-theme\/images\/edu-sponsor\.png"/);
+  assert.match(listPages, /<div className="main-form pt-30">/);
+  assert.match(listPages, /<div className="singel-address">/);
+  assert.match(listPages, /stshwachiewalumni@gmail\.com/);
+  assert.match(listPages, /019-818 5105/);
+  assert.match(listPages, /google\.com\/maps\/embed/);
+  assert.match(stylesheet, /\.legacy-site \.contact-from \{\s*padding: 50px;/);
+  assert.match(stylesheet, /\.legacy-site \.contact-address \{\s*padding: 20px 50px 50px;/);
+  assert.match(stylesheet, /@media \(max-width: 575\.98px\) \{[\s\S]*?\.legacy-site \.contact-from \{\s*padding: 30px;/);
+  assert.match(stylesheet, /@media \(max-width: 575\.98px\) \{[\s\S]*?\.legacy-site \.contact-address \{\s*padding: 0 30px 30px;/);
+  assert.match(stylesheet, /\.legacy-site \.singel-teachers \.image img \{\s*display: inline;/);
+  assert.doesNotMatch(stylesheet, /\.legacy-site \.contact-from,[\s\S]*?\.legacy-site \.contact-address \{\s*padding: 35px;/);
+});

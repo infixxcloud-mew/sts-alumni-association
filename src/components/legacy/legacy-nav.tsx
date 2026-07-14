@@ -1,7 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-html-link-for-pages */
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 
 export type LegacyActive =
@@ -80,7 +80,7 @@ export function LegacyNav({ active }: { active: LegacyActive }) {
 
   return (
     <nav className="navbar navbar-expand-lg">
-      <Link className="navbar-brand" href="/" aria-label="泗里街高级(华侨)中学校友会">
+      <a className="navbar-brand" href="/" aria-label="泗里街高级(华侨)中学校友会">
         <Image
           src="/legacy-theme/images/sts-logo.png"
           alt="泗里街高级(华侨)中学校友会"
@@ -88,7 +88,7 @@ export function LegacyNav({ active }: { active: LegacyActive }) {
           height={87}
           priority
         />
-      </Link>
+      </a>
 
       <button
         className={`navbar-toggler${open ? " active" : ""}`}
@@ -110,13 +110,13 @@ export function LegacyNav({ active }: { active: LegacyActive }) {
         <ul className="navbar-nav ml-auto">
           {navItems.map((item) => (
             <li key={item.href} className="nav-item">
-              <Link
+              <a
                 href={item.href}
                 className={item.active === active ? "active" : undefined}
                 onClick={closeNavigation}
               >
                 {item.label}
-              </Link>
+              </a>
               {item.children ? (
                 <>
                   <button
@@ -132,9 +132,9 @@ export function LegacyNav({ active }: { active: LegacyActive }) {
                   >
                     {item.children.map((child) => (
                       <li key={child.href}>
-                        <Link href={child.href} onClick={closeNavigation}>
+                        <a href={child.href} onClick={closeNavigation}>
                           {child.label}
-                        </Link>
+                        </a>
                       </li>
                     ))}
                   </ul>

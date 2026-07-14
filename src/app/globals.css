@@ -261,8 +261,6 @@ body {
 
 .legacy-site .saidbar-post,
 .legacy-site .categories,
-.legacy-site .contact-from,
-.legacy-site .contact-address,
 .legacy-site .blog-details {
   background: #fff;
 }
@@ -272,9 +270,12 @@ body {
   padding: 25px;
 }
 
-.legacy-site .contact-from,
+.legacy-site .contact-from {
+  padding: 50px;
+}
+
 .legacy-site .contact-address {
-  padding: 35px;
+  padding: 20px 50px 50px;
 }
 
 .legacy-site .contact-address ul li + li {
@@ -284,6 +285,10 @@ body {
 .legacy-site .contact-address h6 {
   color: #07294d;
   font-weight: 700;
+}
+
+.legacy-site .singel-teachers .image img {
+  display: inline;
 }
 
 @media (max-width: 991px) {
@@ -348,6 +353,16 @@ body {
 
   .legacy-site .legacy-photo-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 575.98px) {
+  .legacy-site .contact-from {
+    padding: 30px;
+  }
+
+  .legacy-site .contact-address {
+    padding: 0 30px 30px;
   }
 }
 

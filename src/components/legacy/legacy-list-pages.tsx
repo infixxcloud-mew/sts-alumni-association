@@ -1,10 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
 import Link from "next/link";
 import { getPaginationWindow } from "@/components/legacy/legacy-interactions";
 import { LegacyCounter } from "@/components/legacy/legacy-counter";
 import { LegacySlider } from "@/components/legacy/legacy-slider";
 import { LegacyPageBanner, LegacySectionTitle, LegacyShell } from "@/components/legacy/legacy-shell";
-import type { Album, ContentItem } from "@/lib/site-data";
+import type { Album, ContentItem, MediaItem } from "@/lib/site-data";
 import { displayDate, itemImage, siteData } from "@/lib/site-data";
 import { staticPageContent } from "@/lib/static-pages";
 
@@ -16,14 +17,62 @@ function albumPath(album: Album) {
   return `/gallery/${encodeURIComponent(album.slug)}`;
 }
 
+function mediaTitle(title: string) {
+  return siteData.media.find((media) => media.title === title);
+}
+
+function imageSource(media: MediaItem | null | undefined) {
+  return media?.fullSrc || media?.thumbSrc || "";
+}
+
+function iconText(icon: string, text: string | number | undefined) {
+  if (!text) return null;
+
+  return (
+    <span>
+      <i className={`fa ${icon}`} aria-hidden="true" />
+      {String(text)}
+    </span>
+  );
+}
+
+const sponsorPriorImages = [
+  "Ads_ (3).JPG",
+  "Ads_ (2).JPG",
+  "Ads_ (1).JPG",
+  "Ads_ (4).JPG",
+  "Ads_ (7).JPG",
+  "Ads_ (8).JPG",
+];
+
+const sponsorGalleryImages = [
+  "Ads_ (13).JPG",
+  "Ads_ (12).JPG",
+  "Ads_ (10).JPG",
+  "Ads_ (16).JPG",
+  "Ads_ (11).JPG",
+  "Ads_ (15).JPG",
+  "Ads_ (6).JPG",
+  "Ads_ (14).JPG",
+  "Ads_ (17).JPG",
+  "Ads_ (5).JPG",
+  "Ads_ (9).JPG",
+];
+
+function sponsorAdSrc(name: string) {
+  return `/legacy-theme/images/ads/${name}`;
+}
+
 function LegacyPagination({
   basePath,
   currentPage,
   pageCount,
+  alignmentClassName = "justify-content-center",
 }: {
   basePath: string;
   currentPage: number;
   pageCount: number;
+  alignmentClassName?: string;
 }) {
   if (pageCount <= 1) return null;
 
@@ -42,11 +91,11 @@ function LegacyPagination({
 
   return (
     <nav className="courses-pagination mt-50">
-      <ul className="pagination justify-content-center">
+      <ul className={`pagination ${alignmentClassName}`}>
         <li className="page-item">
           {currentPage > 1 ? (
             <Link className="prev page-numbers" href={href(currentPage - 1)}>
-              上一页 &lt;&lt;
+              &laquo; Previous
             </Link>
           ) : null}
           {pages.map((page) => {
@@ -70,7 +119,7 @@ function LegacyPagination({
           })}
           {currentPage < pageCount ? (
             <Link className="next page-numbers" href={href(currentPage + 1)}>
-              下一页 &gt;&gt;
+              Next &raquo;
             </Link>
           ) : null}
         </li>
@@ -85,7 +134,7 @@ export function LegacyAlbumCard({ album }: { album: Album }) {
   return (
     <div className="singel-course mt-30">
       <div className="thum">
-        <div className="image legacy-card-image">
+        <div className="image">
           <Link href={href}>
             {album.coverSrc ? (
               <Image
@@ -123,15 +172,52 @@ export function LegacyGalleryListPage({ albums, page = 1 }: { albums: Album[]; p
 
   return (
     <LegacyShell active="gallery">
-      <LegacyPageBanner title="全部相册" crumb="相册" />
-      <section id="gallery-list" className="pt-90 pb-120 gray-bg">
+      <LegacyPageBanner title="全部相册" crumb="相册" image="/legacy-theme/images/gallery-banner.jpg" positionY="15%" />
+      <section id="courses-part" className="pt-120 pb-120 gray-bg">
         <div className="container">
           <div className="row">
-            {visibleAlbums.map((album) => (
-              <div className="col-lg-4 col-md-6" key={album.id}>
-                <LegacyAlbumCard album={album} />
+            <div className="col-lg-12">
+              <div className="courses-top-search">
+                <ul className="nav float-left" id="myTab" role="tablist">
+                  <li className="nav-item">
+                    <a
+                      className="active"
+                      id="gallery-grid-tab"
+                      data-toggle="tab"
+                      href="#gallery-grid"
+                      role="tab"
+                      aria-controls="gallery-grid"
+                      aria-selected="true"
+                    >
+                      <i className="fa fa-th-large" aria-hidden="true" />
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    显示{albums.length}个相册的其中的{visibleAlbums.length}个
+                  </li>
+                </ul>
+
+                <div className="courses-search float-right">
+                  <form action="/gallery" method="GET">
+                    <input type="text" name="year_sts" placeholder="按年份搜索 | 例子:2023" />
+                    <button type="submit">
+                      <i className="fa fa-search" aria-hidden="true" />
+                    </button>
+                  </form>
+                </div>
               </div>
-            ))}
+            </div>
+          </div>
+          <div className="tab-content" id="myTabContent">
+            <div className="tab-pane fade show active" id="gallery-grid" role="tabpanel" aria-labelledby="gallery-grid-tab">
+              <div className="row">
+                {visibleAlbums.map((album) => (
+                  <div className="col-lg-4 col-md-6" key={album.id}>
+                    <LegacyAlbumCard album={album} />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           <div className="row">
             <div className="col-lg-12">
@@ -232,7 +318,7 @@ export function LegacyMemoryListItem({ item }: { item: ContentItem }) {
 
   return (
     <div className="singel-event-list mt-30">
-      <div className="event-thum legacy-event-thumb">
+      <div className="event-thum">
         <Link href={href}>
           {image ? (
             <Image
@@ -248,12 +334,12 @@ export function LegacyMemoryListItem({ item }: { item: ContentItem }) {
         </Link>
       </div>
       <div className="event-cont">
-        {displayDate(item) ? <span>{displayDate(item)}</span> : null}
+        {iconText("fa-calendar", displayDate(item))}
         <Link href={href}>
           <h4>{item.title}</h4>
         </Link>
-        {item.fields.time ? <span>{String(item.fields.time)}</span> : null}
-        {item.fields.venue ? <span>{String(item.fields.venue)}</span> : null}
+        {iconText("fa-clock-o", item.fields.time)}
+        {iconText("fa-map-marker", item.fields.venue)}
         {item.excerpt ? <p>{item.excerpt}</p> : null}
       </div>
     </div>
@@ -266,14 +352,18 @@ export function LegacyMemoryListPage({ memories, page = 1 }: { memories: Content
 
   return (
     <LegacyShell active="memory">
-      <LegacyPageBanner title="全部回忆" crumb="回忆" />
+      <LegacyPageBanner title="全部回忆" crumb="回忆" image="/legacy-theme/images/memory-banner.jpg" positionY="83%" />
       <section id="event-page" className="pt-90 pb-120 gray-bg">
         <div className="container">
           <div className="row">
-            <div className="col-lg-12">
-              {visibleMemories.map((item) => (
+            {visibleMemories.map((item) => (
+              <div className="col-lg-6" key={item.id}>
                 <LegacyMemoryListItem key={item.id} item={item} />
-              ))}
+              </div>
+            ))}
+          </div>
+          <div className="row">
+            <div className="col-lg-12">
               <LegacyPagination
                 basePath="/memory"
                 currentPage={pagination.currentPage}
@@ -293,16 +383,10 @@ export function LegacyAnnouncementCard({ item }: { item: ContentItem }) {
 
   return (
     <div className="singel-blog mt-30">
-      <div className="blog-thum legacy-blog-thumb">
+      <div className="blog-thum">
         <Link href={href}>
           {image ? (
-            <Image
-              src={image}
-              alt={item.title}
-              width={770}
-              height={430}
-              sizes="(max-width: 991px) 100vw, 66vw"
-            />
+            <img src={item.image?.fullSrc || image} alt={item.title} />
           ) : (
             <span className="legacy-image-placeholder">通告</span>
           )}
@@ -313,9 +397,30 @@ export function LegacyAnnouncementCard({ item }: { item: ContentItem }) {
           <h3>{item.title}</h3>
         </Link>
         <ul>
-          {displayDate(item) ? <li>{displayDate(item)}</li> : null}
-          {item.fields.author ? <li>{String(item.fields.author)}</li> : null}
-          {item.fields.category ? <li>{String(item.fields.category)}</li> : null}
+          {displayDate(item) ? (
+            <li>
+              <a href="javascript:;">
+                <i className="fa fa-calendar" aria-hidden="true" />
+                {displayDate(item)}
+              </a>
+            </li>
+          ) : null}
+          {item.fields.author ? (
+            <li>
+              <a href="javascript:;">
+                <i className="fa fa-user" aria-hidden="true" />
+                {String(item.fields.author)}
+              </a>
+            </li>
+          ) : null}
+          {item.fields.category ? (
+            <li>
+              <a href="javascript:;">
+                <i className="fa fa-tags" aria-hidden="true" />
+                {String(item.fields.category)}
+              </a>
+            </li>
+          ) : null}
         </ul>
         {item.excerpt ? <p>{item.excerpt}</p> : null}
       </div>
@@ -335,7 +440,7 @@ export function LegacyAnnouncementListPage({
 
   return (
     <LegacyShell active="announcement">
-      <LegacyPageBanner title="全部通告" crumb="通告" />
+      <LegacyPageBanner title="全部通告" crumb="通告" image="/legacy-theme/images/hcom3.jpg" bannerClassName="pt-105 pb-130 bg_cover" positionY="15%" />
       <section id="blog-page" className="pt-90 pb-120 gray-bg">
         <div className="container">
           <div className="row">
@@ -347,20 +452,79 @@ export function LegacyAnnouncementListPage({
                 basePath="/announcement"
                 currentPage={pagination.currentPage}
                 pageCount={pagination.pageCount}
+                alignmentClassName="justify-content-lg-end justify-content-center"
               />
             </div>
             <div className="col-lg-4">
-              <LegacySidebar
-                title="重点更新"
-                items={announcements.slice(0, 5)}
-                basePath="/announcement"
-                categoryTitle="类别分类"
-              />
+              <LegacyAnnouncementSidebar items={announcements} />
             </div>
           </div>
         </div>
       </section>
     </LegacyShell>
+  );
+}
+
+function LegacyAnnouncementSidebar({ items }: { items: ContentItem[] }) {
+  const categorySet = new Set(items.map((item) => String(item.fields.category || "")).filter(Boolean));
+  const legacyCategoryOrder = ["活动", "奖励金", "周年活动"];
+  const categories = [
+    ...legacyCategoryOrder.filter((category) => categorySet.has(category)),
+    ...Array.from(categorySet).filter((category) => !legacyCategoryOrder.includes(category)),
+  ];
+
+  return (
+    <div className="saidbar">
+      <div className="row">
+        <div className="col-lg-12 col-md-6">
+          <div className="saidbar-search mt-30">
+            <form action="/announcement" method="GET">
+              <input type="text" name="keyword_search" placeholder="关键词搜索" />
+              <button type="submit">
+                <i className="fa fa-search" aria-hidden="true" />
+              </button>
+            </form>
+          </div>
+          <div className="categories mt-30">
+            <h4>类别分类</h4>
+            <ul>
+              {categories.map((category) => (
+                <li key={category}>
+                  <a href={`/announcement?cat_=${encodeURIComponent(category)}`}>{category}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="col-lg-12 col-md-6">
+          <div className="saidbar-post mt-30">
+            <h4>重点更新</h4>
+            <ul>
+              {items.slice(0, 3).map((item) => {
+                const image = itemImage(item);
+
+                return (
+                  <li key={item.id}>
+                    <Link href={contentPath("/announcement", item)}>
+                      <div className="singel-post">
+                        <div className="thum">
+                          {image ? <img src={image} style={{ width: "120px", height: "90px" }} alt={item.title} /> : null}
+                        </div>
+                        <div className="cont">
+                          <h6>{item.title}</h6>
+                          {displayDate(item) ? <span>{displayDate(item)}</span> : null}
+                        </div>
+                      </div>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -551,6 +715,22 @@ export function LegacyGenericPage({ page }: { page: ContentItem }) {
     return <LegacyAboutUsPage />;
   }
 
+  if (page.slug === "sponsor") {
+    return <LegacySponsorPage />;
+  }
+
+  if (page.slug === "education-foundation") {
+    return <LegacyEducationFoundationPage />;
+  }
+
+  if (page.slug === "education-foundation-contribution") {
+    return <LegacyEducationContributionPage />;
+  }
+
+  if (page.slug === "education-foundation-sponsor") {
+    return <LegacyEducationSponsorPage />;
+  }
+
   return (
     <LegacyShell active={active}>
       <LegacyPageBanner
@@ -610,6 +790,137 @@ export function LegacyGenericPage({ page }: { page: ContentItem }) {
   );
 }
 
+function LegacySponsorPage() {
+  return (
+    <LegacyShell active="sponsor">
+      <LegacyPageBanner title="赞助商" crumb="赞助商列表" />
+      <section id="sponsor-part">
+        <div id="prior-sponsor" className="container-fluid pt-50 gray-bg">
+          {sponsorPriorImages.map((image) => (
+            <img src={sponsorAdSrc(image)} className="img-responsive" alt="" key={image} />
+          ))}
+        </div>
+
+        <div id="gallery" className="container-fluid gray-bg pb-90">
+          {sponsorGalleryImages.map((image) => (
+            <img src={sponsorAdSrc(image)} className="img-responsive" alt="" key={image} />
+          ))}
+        </div>
+      </section>
+    </LegacyShell>
+  );
+}
+
+function LegacyEducationFoundationPage() {
+  const members = [
+    { name: "Neigne Hun Hee", role: "领队", image: mediaTitle("Ngieng Hun Hee-Resized") },
+    { name: "詹庆将医生", role: "委员", image: mediaTitle("詹庆将-Resized") },
+    { name: "Chieng Kuok Hien", role: "委员", image: mediaTitle("Chieng Kuok Hien-Resized") },
+    { name: "Wong King Tung", role: "委员", image: mediaTitle("Wong King Tung-Resized"), alt: "Wong King Tungn" },
+    { name: "Ling Leh Hieh", role: "委员", image: mediaTitle("WhatsApp-Image-2023-09-17-at-18.54.21") },
+    { name: "Chieng Swee Eng", role: "委员", image: mediaTitle("WhatsApp-Image-2023-09-17"), alt: "Chieng Sweet Eng" },
+  ];
+
+  return (
+    <LegacyShell active="education">
+      <LegacyPageBanner title="泗里街高级(华侨)中学教育基金委员会" crumb="教育基金" image="/legacy-theme/images/edu-committee.png" />
+      <section id="teachers-page" className="pt-90 pb-120 gray-bg">
+        <div className="container">
+          <div className="row">
+            {members.map((member) => (
+              <div className="col-lg-3 col-sm-6" key={member.name}>
+                <div className="singel-teachers mt-30 text-center">
+                  <div className="image">
+                    {member.image ? (
+                      <img
+                        src={imageSource(member.image)}
+                        style={{ width: "270px", height: "350px" }}
+                        alt={member.alt || member.name}
+                      />
+                    ) : null}
+                  </div>
+                  <div className="cont">
+                    <a href="javascript:;">
+                      <h6>{member.name}</h6>
+                    </a>
+                    <span>{member.role}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </LegacyShell>
+  );
+}
+
+function LegacyEducationContributionPage() {
+  return (
+    <LegacyShell active="education">
+      <LegacyPageBanner title="教育基金/校友卓越贡献" crumb="教育基金/校友贡献" image="/legacy-theme/images/edu-sponsor.png" />
+      <section id="event-page" className="pt-90 pb-120 gray-bg">
+        <div className="container">
+          <div className="row">
+            {siteData.contributions.map((item) => (
+              <div className="col-lg-6" key={item.id}>
+                <LegacyEducationContributionListItem item={item} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </LegacyShell>
+  );
+}
+
+function LegacyEducationContributionListItem({ item }: { item: ContentItem }) {
+  const image = itemImage(item);
+  const href = contentPath("/education-foundation-contribution", item);
+
+  return (
+    <div className="singel-event-list mt-30">
+      <div className="event-thum">
+        <Link href={href}>
+          {image ? (
+            <Image
+              src={image}
+              alt={item.title}
+              width={280}
+              height={190}
+              sizes="(max-width: 991px) 100vw, 280px"
+            />
+          ) : null}
+        </Link>
+      </div>
+      <div className="event-cont">
+        {iconText("fa-calendar", displayDate(item))}
+        <Link href={href}>
+          <h4>{item.title}</h4>
+        </Link>
+        {iconText("fa-clock-o", item.fields.time)}
+        {iconText("fa-map-marker", item.fields.venue)}
+        {item.excerpt ? <p>{item.excerpt}</p> : null}
+      </div>
+    </div>
+  );
+}
+
+function LegacyEducationSponsorPage() {
+  const sponsorList = mediaTitle("sponsor-list");
+
+  return (
+    <LegacyShell active="education">
+      <LegacyPageBanner title="母校筑梦之路赞助者" crumb="赞助者" image="/legacy-theme/images/edu-sponsor.png" />
+      <section id="sponsor-photo" className="pt-90 pb-120 gray-bg">
+        <div className="container">
+          {sponsorList ? <img src={imageSource(sponsorList)} alt="" /> : null}
+        </div>
+      </section>
+    </LegacyShell>
+  );
+}
+
 function LegacyAboutPartnerCarousel() {
   const partnerImages = [
     "HSL.png",
@@ -628,7 +939,6 @@ function LegacyAboutPartnerCarousel() {
             <div className="col-lg-12" key={`${image}-${index}`}>
               <div className="singel-patnar text-center mt-40">
                 {image ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={image} alt="Logo" />
                 ) : null}
               </div>
@@ -935,69 +1245,109 @@ function LegacyContactPage({ page }: { page: ContentItem }) {
         title={staticContent?.heading || page.title}
         crumb="联络我们"
         image="/legacy-theme/images/contact-banner.jpg"
+        bannerClassName="pt-105 pb-130 bg_cover"
+        positionY="70%"
       />
       <section id="contact-page" className="pt-90 pb-120 gray-bg">
         <div className="container">
           <div className="row">
             <div className="col-lg-7">
               <div className="contact-from mt-30">
-                <div className="section-title pb-30">
+                <div className="section-title">
                   <h5>联络</h5>
                   <h2>保持联系</h2>
                 </div>
-                <form className="legacy-contact-form" action="#">
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="singel-form form-group">
-                        <input name="client_name" type="text" placeholder="姓名" />
+                <div className="main-form pt-30">
+                  <form method="POST">
+                    <div className="row">
+                      <div className="col-md-6">
+                        <div className="singel-form  form-group">
+                          <input name="client_name" type="text" placeholder="姓名" required />
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <div className="singel-form  form-group">
+                          <input name="client_email" type="email" placeholder="邮件地址" required />
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <div className="singel-form  form-group">
+                          <input name="client_subject" type="text" placeholder="标题" required />
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <div className="singel-form  form-group">
+                          <input name="client_phone" type="text" placeholder="手机号码" required />
+                        </div>
+                      </div>
+                      <div className="col-md-12">
+                        <div className="singel-form  form-group">
+                          <textarea
+                            name="client_message"
+                            placeholder="请描述您的想法和问题，我们会尽快回复"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md-12">
+                        <div className="singel-form">
+                          <button type="submit" name="client_send" value="client_send" className="main-btn">
+                            发送
+                          </button>
+                        </div>
                       </div>
                     </div>
-                    <div className="col-md-6">
-                      <div className="singel-form form-group">
-                        <input name="client_email" type="email" placeholder="邮件地址" />
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="singel-form form-group">
-                        <input name="client_subject" type="text" placeholder="标题" />
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="singel-form form-group">
-                        <input name="client_phone" type="text" placeholder="手机号码" />
-                      </div>
-                    </div>
-                    <div className="col-md-12">
-                      <div className="singel-form form-group">
-                        <textarea
-                          name="client_message"
-                          placeholder="请描述您的想法和问题，我们会尽快回复"
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-12">
-                      <div className="singel-form">
-                        <button type="button" className="main-btn">
-                          发送
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </form>
+                  </form>
+                </div>
               </div>
             </div>
             <div className="col-lg-5">
               <div className="contact-address mt-30">
                 <ul>
-                  {(staticContent?.facts || []).map((fact) => (
-                    <li key={fact.label}>
-                      <div className="cont">
-                        <h6>{fact.label}</h6>
-                        <p>{fact.value}</p>
+                  <li>
+                    <div className="singel-address">
+                      <div className="icon">
+                        <i className="fa fa-home" aria-hidden="true" />
                       </div>
-                    </li>
-                  ))}
+                      <div className="cont">
+                        <p>Peti Surat 78, 96100, Sarikei, Sarawak, Malaysia</p>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="singel-address">
+                      <div className="icon">
+                        <i className="fa fa-phone" aria-hidden="true" />
+                      </div>
+                      <div className="cont">
+                        <p>084-655 686</p>
+                        <p>019-818 5105</p>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="singel-address">
+                      <div className="icon">
+                        <i className="fa fa-envelope-o" aria-hidden="true" />
+                      </div>
+                      <div className="cont">
+                        <p>stshwachiewalumni@gmail.com</p>
+                        <p>stsalumniassociationweb@gmail.com</p>
+                      </div>
+                    </div>
+                  </li>
                 </ul>
+              </div>
+              <div className="map mt-30">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4193.228778913893!2d111.52330007518108!3d2.0890103587538302!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31f9c3b50749eb15%3A0x529d7e5300a0085e!2sSMK%20Tinggi%20Sarikei!5e1!3m2!1sen!2smy!4v1686571626273!5m2!1sen!2smy"
+                  width="450"
+                  height="210"
+                  style={{ border: 0, width: "100%" }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
               </div>
             </div>
           </div>
