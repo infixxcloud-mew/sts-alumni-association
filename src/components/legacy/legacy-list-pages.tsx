@@ -586,11 +586,25 @@ export function LegacyContentDetailPage({
   crumb,
   item,
 }: {
-  active: "announcement" | "memory";
+  active: "announcement" | "memory" | "education";
   crumb: string;
   item: ContentItem;
 }) {
   const image = item.image?.fullSrc || itemImage(item);
+  const sidebarTitle =
+    active === "announcement"
+      ? "重点更新"
+      : active === "memory"
+        ? "全部回忆"
+        : "教育基金/校友贡献";
+  const sidebarItems =
+    active === "announcement"
+      ? siteData.announcements.slice(0, 5)
+      : active === "memory"
+        ? siteData.memories.slice(0, 5)
+        : siteData.contributions.slice(0, 5);
+  const sidebarBasePath =
+    active === "education" ? "/education-foundation-contribution" : `/${active}`;
 
   return (
     <LegacyShell active={active}>
@@ -633,13 +647,9 @@ export function LegacyContentDetailPage({
             </div>
             <div className="col-lg-4">
               <LegacySidebar
-                title={active === "announcement" ? "重点更新" : "全部回忆"}
-                items={
-                  active === "announcement"
-                    ? siteData.announcements.slice(0, 5)
-                    : siteData.memories.slice(0, 5)
-                }
-                basePath={`/${active}`}
+                title={sidebarTitle}
+                items={sidebarItems}
+                basePath={sidebarBasePath}
                 categoryTitle="类别分类"
               />
             </div>

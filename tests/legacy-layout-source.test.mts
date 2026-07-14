@@ -78,10 +78,11 @@ test("keeps partner logos at their legacy intrinsic image size", async () => {
 });
 
 test("routes public static pages to their original WordPress layouts", async () => {
-  const [listPages, shell, navigation] = await Promise.all([
+  const [listPages, shell, navigation, contributionRoute] = await Promise.all([
     readFile(resolve("src/components/legacy/legacy-list-pages.tsx"), "utf8"),
     readFile(resolve("src/components/legacy/legacy-shell.tsx"), "utf8"),
     readFile(resolve("src/components/legacy/legacy-nav.tsx"), "utf8"),
+    readFile(resolve("src/app/education-foundation-contribution/[slug]/page.tsx"), "utf8"),
   ]);
 
   assert.match(shell, /bannerClassName = "pt-105 pb-110 bg_cover"/);
@@ -94,6 +95,10 @@ test("routes public static pages to their original WordPress layouts", async () 
   assert.match(listPages, /page\.slug === "education-foundation"[\s\S]*?<LegacyEducationFoundationPage/);
   assert.match(listPages, /page\.slug === "education-foundation-contribution"[\s\S]*?<LegacyEducationContributionPage/);
   assert.match(listPages, /page\.slug === "education-foundation-sponsor"[\s\S]*?<LegacyEducationSponsorPage/);
+  assert.match(listPages, /active: "announcement" \| "memory" \| "education"/);
+  assert.match(listPages, /active === "education" \? "\/education-foundation-contribution"/);
+  assert.match(contributionRoute, /siteData\.contributions\.map/);
+  assert.match(contributionRoute, /<LegacyContentDetailPage[\s\S]*?active="education"/);
   assert.match(navigation, /<a\s+href=\{item\.href\}/);
   assert.doesNotMatch(navigation, /import Link from "next\/link"/);
 });
