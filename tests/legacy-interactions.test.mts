@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   getLegacyCarouselOptions,
+  getLegacyViewportCarouselOptions,
   getPaginationWindow,
 } from "../src/components/legacy/legacy-interactions.ts";
 import { getCounterValue } from "../src/components/legacy/legacy-counter-value.ts";
@@ -29,6 +30,33 @@ test("uses the legacy WordPress Slick timing and responsive settings", () => {
     mobileArrows: false,
     slidesAt: { desktop: 2, tablet: 1, mobile: 1 },
     transition: "slide",
+  });
+});
+
+test("uses the legacy mobile slide counts on the first client render", () => {
+  assert.deepEqual(getLegacyViewportCarouselOptions("hero", 390), {
+    arrows: false,
+    slidesToShow: 1,
+  });
+  assert.deepEqual(getLegacyViewportCarouselOptions("category", 390), {
+    arrows: true,
+    slidesToShow: 1,
+  });
+  assert.deepEqual(getLegacyViewportCarouselOptions("course", 390), {
+    arrows: false,
+    slidesToShow: 1,
+  });
+  assert.deepEqual(getLegacyViewportCarouselOptions("course", 800), {
+    arrows: true,
+    slidesToShow: 2,
+  });
+  assert.deepEqual(getLegacyViewportCarouselOptions("testimonial", 390), {
+    arrows: false,
+    slidesToShow: 1,
+  });
+  assert.deepEqual(getLegacyViewportCarouselOptions("partner", 390), {
+    arrows: false,
+    slidesToShow: 2,
   });
 });
 

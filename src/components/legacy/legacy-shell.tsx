@@ -53,8 +53,8 @@ export function LegacyHeader({ active }: { active: LegacyActive }) {
     <header id="header-part">
       <div className="navigation navigation-2">
         <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
+          <div className="row no-gutters">
+            <div className="col-lg-12 col-md-12 col-sm-12 col-12">
               <LegacyNav active={active} />
             </div>
           </div>

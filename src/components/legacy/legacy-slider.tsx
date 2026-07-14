@@ -1,9 +1,10 @@
 "use client";
 
-import type { KeyboardEvent, ReactNode } from "react";
+import { useEffect, useState, type KeyboardEvent, type ReactNode } from "react";
 import Slider, { type CustomArrowProps, type Settings } from "react-slick";
 import {
   getLegacyCarouselOptions,
+  getLegacyViewportCarouselOptions,
   type LegacyCarouselKind,
 } from "@/components/legacy/legacy-interactions";
 
@@ -40,106 +41,26 @@ function LegacyArrow({
   );
 }
 
-function responsiveSettings(kind: LegacyCarouselKind): NonNullable<Settings["responsive"]> {
-  const options = getLegacyCarouselOptions(kind);
-
-  if (kind === "hero") {
-    return [{ breakpoint: 767, settings: { arrows: false, dots: false } }];
-  }
-
-  if (kind === "category") {
-    return [
-      { breakpoint: 922, settings: { slidesToShow: 3, slidesToScroll: 1 } },
-      { breakpoint: 768, settings: { slidesToShow: 2, slidesToScroll: 1 } },
-      { breakpoint: 576, settings: { slidesToShow: 1, slidesToScroll: 1 } },
-    ];
-  }
-
-  if (kind === "course") {
-    return [
-      {
-        breakpoint: 1200,
-        settings: { slidesToShow: 3, slidesToScroll: 1 },
-      },
-      {
-        breakpoint: 992,
-        settings: {
-          slidesToShow: options.slidesAt.tablet,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          arrows: false,
-          slidesToShow: options.slidesAt.mobile,
-          slidesToScroll: 1,
-        },
-      },
-    ];
-  }
-
-  if (kind === "testimonial") {
-    return [
-      {
-        breakpoint: 1200,
-        settings: { slidesToShow: 2, slidesToScroll: 1 },
-      },
-      {
-        breakpoint: 992,
-        settings: {
-          slidesToShow: options.slidesAt.tablet,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: options.slidesAt.mobile,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 576,
-        settings: {
-          slidesToShow: options.slidesAt.mobile,
-          slidesToScroll: 1,
-        },
-      },
-    ];
-  }
-
-  return [
-    { breakpoint: 1200, settings: { slidesToShow: 4, slidesToScroll: 1 } },
-    {
-      breakpoint: 992,
-      settings: {
-        slidesToShow: options.slidesAt.tablet,
-        slidesToScroll: 1,
-      },
-    },
-    {
-      breakpoint: 768,
-      settings: {
-        slidesToShow: options.slidesAt.mobile,
-        slidesToScroll: 1,
-      },
-    },
-    {
-      breakpoint: 576,
-      settings: {
-        slidesToShow: options.slidesAt.mobile,
-        slidesToScroll: 1,
-      },
-    },
-  ];
-}
-
 export function LegacySlider({ children, className, kind }: LegacySliderProps) {
   const options = getLegacyCarouselOptions(kind);
-  const showArrows = kind !== "testimonial" && kind !== "partner";
+  const [hasMounted, setHasMounted] = useState(false);
+  const [viewportWidth, setViewportWidth] = useState<number | null>(null);
+
+  useEffect(() => {
+    const updateViewportWidth = () => setViewportWidth(window.innerWidth);
+    const mountTimer = window.setTimeout(() => setHasMounted(true), 0);
+
+    updateViewportWidth();
+    window.addEventListener("resize", updateViewportWidth);
+    return () => {
+      window.clearTimeout(mountTimer);
+      window.removeEventListener("resize", updateViewportWidth);
+    };
+  }, []);
+
+  const viewportOptions = getLegacyViewportCarouselOptions(kind, viewportWidth);
   const settings: Settings = {
-    arrows: showArrows,
+    arrows: viewportOptions.arrows,
     autoplay: options.autoplayDelay !== null,
     autoplaySpeed: options.autoplayDelay ?? undefined,
     dots: kind === "testimonial",
@@ -148,14 +69,17 @@ export function LegacySlider({ children, className, kind }: LegacySliderProps) {
     nextArrow: <LegacyArrow direction="next" />,
     pauseOnHover: kind !== "hero",
     prevArrow: <LegacyArrow direction="prev" />,
-    responsive: responsiveSettings(kind),
     slidesToScroll: 1,
-    slidesToShow: options.slidesAt.desktop,
+    slidesToShow: viewportOptions.slidesToShow,
     speed: kind === "hero" ? 500 : 800,
   };
 
+  if (!hasMounted) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
-    <Slider {...settings} className={className}>
+    <Slider {...settings} className={className} key={`${kind}-${viewportWidth ?? "desktop"}`}>
       {children}
     </Slider>
   );

@@ -50,7 +50,7 @@ body {
 .legacy-site {
   width: 100%;
   color: #505050;
-  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .legacy-site img {
@@ -329,12 +329,12 @@ body {
 
 @media (max-width: 767px) {
   .legacy-site .single-slider {
-    min-height: 620px;
+    min-height: 0;
   }
 
   .legacy-site .slider-cont h1 {
-    font-size: 36px;
-    line-height: 1.25;
+    font-size: 30px;
+    line-height: 36px;
   }
 
   .legacy-site .singel-event-list {
@@ -364,13 +364,31 @@ body {
   animation-name: fadeInUp;
 }
 
+/* react-slick nests Bootstrap columns one level deeper than the original jQuery Slick. */
+.legacy-site .slick-slide > div > .col-lg-4,
+.legacy-site .slick-slide > div > .col-lg-6,
+.legacy-site .slick-slide > div > .col-lg-12,
+.legacy-site .slick-slide > div > .col-md-6 {
+  flex: 0 0 100%;
+  max-width: 100%;
+  width: 100%;
+}
+
+.legacy-site .patnar-slied .slick-slide > div > .col-lg-12 {
+  display: block !important;
+}
+
+.legacy-site .course-slied .slick-slide > div > .col-lg-4.col-md-6 {
+  display: block !important;
+}
+
 .legacy-site .category-slied .singel-category {
   display: block;
   min-height: 0;
 }
 
 .legacy-site .category-slied .singel-category .icon {
-  display: block;
+  display: inline-block;
 }
 
 .legacy-site .category-slied .singel-category .icon img {

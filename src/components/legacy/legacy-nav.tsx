@@ -84,8 +84,8 @@ export function LegacyNav({ active }: { active: LegacyActive }) {
         <Image
           src="/legacy-theme/images/sts-logo.png"
           alt="泗里街高级(华侨)中学校友会"
-          width={150}
-          height={72}
+          width={300}
+          height={87}
           priority
         />
       </Link>

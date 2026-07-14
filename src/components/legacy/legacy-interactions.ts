@@ -59,6 +59,52 @@ export function getLegacyCarouselOptions(kind: LegacyCarouselKind) {
   return carouselOptions[kind];
 }
 
+export function getLegacyViewportCarouselOptions(
+  kind: LegacyCarouselKind,
+  viewportWidth: number | null,
+) {
+  const options = getLegacyCarouselOptions(kind);
+  const desktop = {
+    arrows: kind !== "testimonial" && kind !== "partner",
+    slidesToShow: options.slidesAt.desktop,
+  };
+
+  if (viewportWidth === null) return desktop;
+
+  if (kind === "hero") {
+    return {
+      arrows: viewportWidth >= 767,
+      slidesToShow: 1,
+    };
+  }
+
+  if (kind === "category") {
+    return {
+      arrows: true,
+      slidesToShow: viewportWidth < 576 ? 1 : viewportWidth < 768 ? 2 : 3,
+    };
+  }
+
+  if (kind === "course") {
+    return {
+      arrows: viewportWidth >= 768,
+      slidesToShow: viewportWidth < 768 ? 1 : viewportWidth < 992 ? options.slidesAt.tablet : 3,
+    };
+  }
+
+  if (kind === "testimonial") {
+    return {
+      arrows: false,
+      slidesToShow: viewportWidth < 992 ? options.slidesAt.mobile : options.slidesAt.desktop,
+    };
+  }
+
+  return {
+    arrows: false,
+    slidesToShow: viewportWidth < 768 ? options.slidesAt.mobile : viewportWidth < 992 ? options.slidesAt.tablet : 4,
+  };
+}
+
 export function getPaginationWindow(total: number, pageSize: number, requestedPage: number) {
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const currentPage = Math.min(

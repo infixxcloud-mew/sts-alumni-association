@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { LegacyAlbumCard } from "@/components/legacy/legacy-list-pages";
+import { LegacyBackgroundSlide } from "@/components/legacy/legacy-background-slide";
 import { LegacySectionTitle, LegacyShell } from "@/components/legacy/legacy-shell";
 import { LegacySlider } from "@/components/legacy/legacy-slider";
 import type { Album, ContentItem } from "@/lib/site-data";
@@ -95,6 +95,47 @@ function memberPosition(member: ContentItem) {
   return String(member.fields.position || member.title);
 }
 
+function legacyAlbumPath(album: Album) {
+  return `/gallery/${encodeURIComponent(album.slug)}`;
+}
+
+function LegacyHomeAlbumCard({ album }: { album: Album }) {
+  const href = legacyAlbumPath(album);
+  const image = album.coverFullSrc || album.coverSrc;
+
+  return (
+    <div className="singel-course">
+      <div className="thum">
+        <div className="image">
+          <Link href={href}>
+            {/* The WordPress card uses a native image element, which preserves its loading and sizing behavior. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={image} alt={album.title} />
+          </Link>
+        </div>
+        <div className="price">
+          <span>
+            <i className="fa fa-star" aria-hidden="true" />
+          </span>
+        </div>
+      </div>
+      <div className="cont">
+        <span>
+          <i className="fa fa-calendar" aria-hidden="true" style={{ color: "#ffc600", fontSize: 15 }} />
+          {"\u00A0\u00A0\u00A0"}
+          {album.eventDate}
+        </span>
+        <br />
+        <Link href={href}>
+          <h4>{album.title}</h4>
+        </Link>
+        <br />
+        <br />
+      </div>
+    </div>
+  );
+}
+
 function LegacyHomeAnnouncement({ item, featured = false }: { item: ContentItem; featured?: boolean }) {
   const image = itemImage(item);
   const href = `/announcement/${encodeURIComponent(item.slug)}`;
@@ -182,19 +223,19 @@ export function LegacyHomePage({
   const committeePreview = committees.slice(0, 4);
   const heroSlides = [
     {
-      image: mediaByName("Snapseed-4-scaled.jpg") || albums[0]?.coverFullSrc,
+      image: "/legacy-theme/images/Snapseed-4-scaled.jpg",
       position: "60%",
       text: "我们的社群汇聚了志同道合的人们，传承了丰富的历史，鼓舞着彼此，共同书写卓越的故事，憧憬前程无限",
       title: "连接、传承、共创：致力于卓越的家园",
     },
     {
-      image: mediaByName("Snapseed-5-scaled.jpg"),
+      image: "/legacy-theme/images/Snapseed-5-scaled.jpg",
       position: "60%",
       text: "这里，我们凝聚在一起，以深厚的传统为支撑，激励着彼此，一同探寻无限可能，共同创造卓越成就的明天",
       title: "共铸卓越：团结在梦想的坚实基石上",
     },
     {
-      image: mediaByName("Snapseed-6-scaled.jpg"),
+      image: "/legacy-theme/images/Snapseed-6-scaled.jpg",
       position: "30%",
       text: "细致追溯着光辉灿烂的历史，共同铸造未来令人瞩目的卓越故事，成为连接着过去与未来的坚实纽带",
       title: "追溯荣光，塑造卓越：共同的故事",
@@ -206,15 +247,7 @@ export function LegacyHomePage({
       <section id="slider-part">
         <LegacySlider className="slider-active" kind="hero">
           {heroSlides.map((slide) => (
-            <div
-              className="single-slider bg_cover pt-150"
-              data-overlay="4"
-              key={slide.title}
-              style={{
-                backgroundImage: `url(${slide.image})`,
-                backgroundPositionY: slide.position,
-              }}
-            >
+            <LegacyBackgroundSlide image={slide.image} key={slide.title} position={slide.position}>
               <div className="container">
                 <div className="row">
                   <div className="col-xl-7 col-lg-9">
@@ -242,7 +275,7 @@ export function LegacyHomePage({
                   </div>
                 </div>
               </div>
-            </div>
+            </LegacyBackgroundSlide>
           ))}
         </LegacySlider>
       </section>
@@ -390,12 +423,7 @@ export function LegacyHomePage({
             "/legacy-theme/images/digital-learning-center-1-2.jpg",
             "/legacy-theme/images/digital-learning-center-1-1.jpg",
           ].map((image) => (
-            <div
-              className="single-slider bg_cover pt-150"
-              data-overlay="4"
-              key={image}
-              style={{ backgroundImage: `url(${image})` }}
-            >
+            <LegacyBackgroundSlide image={image} key={image}>
               <div className="container" style={{ paddingTop: "9%" }}>
                 <div className="row">
                   <div className="col-md-12">
@@ -424,7 +452,7 @@ export function LegacyHomePage({
                   </div>
                 </div>
               </div>
-            </div>
+            </LegacyBackgroundSlide>
           ))}
         </LegacySlider>
       </section>
@@ -439,7 +467,7 @@ export function LegacyHomePage({
           <LegacySlider className="row course-slied mt-30" kind="course">
             {featuredAlbums.map((album) => (
               <div className="col-lg-4 col-md-6" key={album.id}>
-                <LegacyAlbumCard album={album} />
+                <LegacyHomeAlbumCard album={album} />
               </div>
             ))}
           </LegacySlider>
@@ -636,7 +664,10 @@ export function LegacyHomePage({
             ].map((image, index) => (
               <div className="col-lg-12" key={`${image}-${index}`}>
                 <div className="singel-patnar text-center mt-40">
-                  {image ? <Image src={image} alt="Logo" width={180} height={100} sizes="180px" /> : null}
+                  {image ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img src={image} alt="Logo" />
+                  ) : null}
                 </div>
               </div>
             ))}
