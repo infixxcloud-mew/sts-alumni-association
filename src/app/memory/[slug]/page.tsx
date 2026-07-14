@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { ContentDetailPage } from "@/components/content-pages";
+import { LegacyContentDetailPage } from "@/components/legacy/legacy-list-pages";
 import { getPublishedCmsContentBySlug } from "@/lib/cms-data";
 import { getContentBySlug, siteData } from "@/lib/site-data";
 
@@ -17,7 +17,7 @@ export async function generateMetadata({
     getContentBySlug(siteData.memories, slug) ||
     (await getPublishedCmsContentBySlug("memory", slug));
   return {
-    title: item ? `${item.title} | 回忆` : "回忆",
+    title: item ? `${item.title} - 回忆 - 泗里街高级(华侨)中学 - 校友会` : "回忆",
   };
 }
 
@@ -32,5 +32,5 @@ export default async function MemoryDetailPage({
     (await getPublishedCmsContentBySlug("memory", slug));
   if (!item) notFound();
 
-  return <ContentDetailPage eyebrow="Memory" item={item} />;
+  return <LegacyContentDetailPage active="memory" crumb="回忆" item={item} />;
 }

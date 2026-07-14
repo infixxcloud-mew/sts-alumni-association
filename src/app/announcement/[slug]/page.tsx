@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { ContentDetailPage } from "@/components/content-pages";
+import { LegacyContentDetailPage } from "@/components/legacy/legacy-list-pages";
 import { getPublishedCmsContentBySlug } from "@/lib/cms-data";
 import { getContentBySlug, siteData } from "@/lib/site-data";
 
@@ -17,7 +17,7 @@ export async function generateMetadata({
     getContentBySlug(siteData.announcements, slug) ||
     (await getPublishedCmsContentBySlug("announcement", slug));
   return {
-    title: item ? `${item.title} | 通告` : "通告",
+    title: item ? `${item.title} - 通告 - 泗里街高级(华侨)中学 - 校友会` : "通告",
   };
 }
 
@@ -32,5 +32,5 @@ export default async function AnnouncementDetailPage({
     (await getPublishedCmsContentBySlug("announcement", slug));
   if (!item) notFound();
 
-  return <ContentDetailPage eyebrow="Notice" item={item} />;
+  return <LegacyContentDetailPage active="announcement" crumb="通告" item={item} />;
 }

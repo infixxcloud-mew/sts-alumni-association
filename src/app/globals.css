@@ -46,3 +46,307 @@ body {
   text-decoration: underline;
   text-underline-offset: 0.18em;
 }
+
+.legacy-site {
+  width: 100%;
+  color: #505050;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+}
+
+.legacy-site img {
+  max-width: 100%;
+  height: auto;
+}
+
+.legacy-site .navigation {
+  z-index: 1000;
+}
+
+.legacy-site .navigation .navbar .navbar-nav li a {
+  white-space: nowrap;
+}
+
+.legacy-site .navbar-collapse.show {
+  display: block;
+}
+
+/* Tailwind's .collapse utility conflicts with Bootstrap's navigation class. */
+.legacy-site .navbar-collapse {
+  visibility: visible;
+}
+
+.legacy-site .navbar-toggler {
+  border: 0;
+}
+
+.legacy-site .legacy-card-image,
+.legacy-site .legacy-blog-thumb,
+.legacy-site .legacy-event-thumb,
+.legacy-site .legacy-detail-cover,
+.legacy-site .legacy-teacher-image {
+  background: #edf0f2;
+  overflow: hidden;
+}
+
+.legacy-site .legacy-card-image img,
+.legacy-site .legacy-blog-thumb img,
+.legacy-site .legacy-event-thumb img,
+.legacy-site .legacy-detail-cover img,
+.legacy-site .legacy-teacher-image img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+}
+
+.legacy-site .legacy-card-image img {
+  aspect-ratio: 370 / 255;
+}
+
+.legacy-site .legacy-blog-thumb img {
+  aspect-ratio: 770 / 430;
+}
+
+.legacy-site .legacy-event-thumb img {
+  aspect-ratio: 280 / 190;
+}
+
+.legacy-site .legacy-detail-cover img {
+  aspect-ratio: 850 / 520;
+}
+
+.legacy-site .legacy-teacher-image img {
+  aspect-ratio: 270 / 340;
+}
+
+.legacy-site .legacy-image-placeholder {
+  align-items: center;
+  background: #e4e8ec;
+  color: #6b7280;
+  display: flex;
+  font-weight: 700;
+  justify-content: center;
+  min-height: 180px;
+  width: 100%;
+}
+
+.legacy-site .legacy-category-icon {
+  align-items: center;
+  background: #ffc600;
+  border-radius: 50%;
+  color: #07294d;
+  display: inline-flex;
+  font-weight: 700;
+  height: 54px;
+  justify-content: center;
+  margin-right: 15px;
+  min-width: 54px;
+}
+
+.legacy-site .singel-category {
+  align-items: flex-start;
+  display: flex;
+  min-height: 132px;
+}
+
+.legacy-site .singel-category .cont p {
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.7;
+  margin-top: 8px;
+}
+
+.legacy-site .single-feature,
+.legacy-site .singel-feature {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  min-height: 210px;
+  padding: 35px 25px;
+}
+
+.legacy-site .single-feature h4,
+.legacy-site .singel-feature h4,
+.legacy-site #video-feature .section-title h2,
+.legacy-site #video-feature .section-title h5,
+.legacy-site #testimonial .section-title h2,
+.legacy-site #testimonial .section-title h5,
+.legacy-site .singel-testimonial h6,
+.legacy-site .singel-testimonial span,
+.legacy-site .singel-testimonial p {
+  color: #fff;
+}
+
+.legacy-site .single-feature p,
+.legacy-site .singel-feature p {
+  color: rgba(255, 255, 255, 0.82);
+  margin-top: 15px;
+}
+
+.legacy-site .legacy-play-symbol {
+  align-items: center;
+  background: #ffc600;
+  border-radius: 50%;
+  color: #07294d;
+  display: inline-flex;
+  font-size: 28px;
+  height: 80px;
+  justify-content: center;
+  width: 80px;
+}
+
+.legacy-site .course-btn {
+  padding-top: 55px;
+}
+
+.legacy-site .legacy-photo-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.legacy-site .legacy-photo {
+  background: #fff;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
+  display: block;
+  overflow: hidden;
+  position: relative;
+}
+
+.legacy-site .legacy-photo img {
+  aspect-ratio: 270 / 210;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+  width: 100%;
+}
+
+.legacy-site .legacy-photo:hover img {
+  transform: scale(1.05);
+}
+
+.legacy-site .legacy-photo span {
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.72));
+  bottom: 0;
+  color: #fff;
+  font-size: 13px;
+  left: 0;
+  line-height: 1.4;
+  padding: 28px 12px 10px;
+  position: absolute;
+  right: 0;
+}
+
+.legacy-site .legacy-prose {
+  color: #505050;
+  font-size: 16px;
+  line-height: 1.85;
+}
+
+.legacy-site .legacy-prose p + p {
+  margin-top: 16px;
+}
+
+.legacy-site .legacy-prose img {
+  border-radius: 0;
+  margin: 24px 0;
+}
+
+.legacy-site .legacy-excerpt {
+  background: #fff;
+  border-left: 4px solid #ffc600;
+  color: #07294d;
+  font-size: 18px;
+  margin: 25px 0;
+  padding: 18px 22px;
+}
+
+.legacy-site .saidbar-post,
+.legacy-site .categories,
+.legacy-site .contact-from,
+.legacy-site .contact-address,
+.legacy-site .blog-details {
+  background: #fff;
+}
+
+.legacy-site .saidbar-post,
+.legacy-site .categories {
+  padding: 25px;
+}
+
+.legacy-site .contact-from,
+.legacy-site .contact-address {
+  padding: 35px;
+}
+
+.legacy-site .contact-address ul li + li {
+  margin-top: 22px;
+}
+
+.legacy-site .contact-address h6 {
+  color: #07294d;
+  font-weight: 700;
+}
+
+@media (max-width: 991px) {
+  .legacy-site .navigation .navbar .navbar-nav {
+    background: #fff;
+    padding: 10px 0 20px;
+  }
+
+  .legacy-site .navigation .navbar .navbar-nav li {
+    margin: 0;
+  }
+
+  .legacy-site .navigation .navbar .navbar-nav li a {
+    color: #07294d;
+    display: block;
+    padding: 12px 18px;
+  }
+
+  .legacy-site .navigation .navbar .navbar-nav li .sub-menu {
+    box-shadow: none;
+    display: block;
+    opacity: 1;
+    padding-left: 18px;
+    position: static;
+    transform: none;
+    visibility: visible;
+    width: auto;
+  }
+
+  .legacy-site .about-bg {
+    display: none;
+  }
+
+  .legacy-site .course-btn {
+    padding-top: 0;
+    text-align: left !important;
+  }
+
+  .legacy-site .legacy-photo-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .legacy-site .single-slider {
+    min-height: 620px;
+  }
+
+  .legacy-site .slider-cont h1 {
+    font-size: 36px;
+    line-height: 1.25;
+  }
+
+  .legacy-site .singel-event-list {
+    display: block;
+  }
+
+  .legacy-site .singel-event-list .event-thum,
+  .legacy-site .singel-event-list .event-cont {
+    width: 100%;
+  }
+
+  .legacy-site .legacy-photo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
