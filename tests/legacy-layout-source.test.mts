@@ -37,12 +37,13 @@ test("keeps Bootstrap slide columns at the Slick slide width", async () => {
 });
 
 test("keeps the legacy homepage hero, course card, and header markup", async () => {
-  const [home, navigation, shell, backgroundSlide, slider] = await Promise.all([
+  const [home, navigation, shell, backgroundSlide, slider, listPages] = await Promise.all([
     readFile(resolve("src/components/legacy/legacy-home.tsx"), "utf8"),
     readFile(resolve("src/components/legacy/legacy-nav.tsx"), "utf8"),
     readFile(resolve("src/components/legacy/legacy-shell.tsx"), "utf8"),
     readFile(resolve("src/components/legacy/legacy-background-slide.tsx"), "utf8"),
     readFile(resolve("src/components/legacy/legacy-slider.tsx"), "utf8"),
+    readFile(resolve("src/components/legacy/legacy-list-pages.tsx"), "utf8"),
   ]);
 
   assert.match(home, /image: "\/legacy-theme\/images\/Snapseed-4-scaled\.jpg"/);
@@ -62,6 +63,8 @@ test("keeps the legacy homepage hero, course card, and header markup", async () 
   assert.match(navigation, /width=\{300\}/);
   assert.match(shell, /className="row no-gutters"/);
   assert.match(shell, /className="col-lg-12 col-md-12 col-sm-12 col-12"/);
+  assert.match(listPages, /function LegacyAboutPartnerCarousel/);
+  assert.match(listPages, /<LegacyAboutPartnerCarousel \/>/);
 });
 
 test("keeps partner logos at their legacy intrinsic image size", async () => {

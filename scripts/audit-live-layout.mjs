@@ -3,12 +3,15 @@ import { resolve } from "node:path";
 
 const chromeEndpoint = "http://127.0.0.1:9223";
 const outputDirectory = resolve("artifacts/layout-audit");
+const auditPath = process.env.AUDIT_PATH || "/";
+const routeFileName = auditPath === "/" ? "home" : auditPath.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "");
+const navigationWait = Number(process.env.AUDIT_WAIT_MS || 6500);
 const targets = [
-  { name: "old-home", url: "https://stsalumniassociation.com/" },
-  { name: "new-home", url: "https://sts-alumni-association.vercel.app/" },
+  { name: "old", url: new URL(auditPath, "https://stsalumniassociation.com/").toString() },
+  { name: "new", url: new URL(auditPath, "https://sts-alumni-association.vercel.app/").toString() },
 ];
 if (process.env.AUDIT_LOCAL_URL) {
-  targets.push({ name: "local-home", url: process.env.AUDIT_LOCAL_URL });
+  targets.push({ name: "local", url: new URL(auditPath, process.env.AUDIT_LOCAL_URL).toString() });
 }
 if (process.env.AUDIT_TARGET) {
   const selectedTarget = targets.find((target) => target.name === process.env.AUDIT_TARGET);
@@ -297,7 +300,7 @@ async function auditPage(page, target, viewport) {
 
   const firstEvent = page.events.length;
   await page.send("Page.navigate", { url: target.url });
-  await wait(6500);
+  await wait(navigationWait);
 
   const evaluation = await page.send("Runtime.evaluate", {
     expression: auditExpression,
@@ -324,7 +327,7 @@ async function auditPage(page, target, viewport) {
         event.method,
     );
 
-  const fileName = `${target.name}-${viewport.name}.png`;
+  const fileName = `${target.name}-${routeFileName}-${viewport.name}.png`;
   await writeFile(resolve(outputDirectory, fileName), Buffer.from(screenshot.data, "base64"));
 
   return {

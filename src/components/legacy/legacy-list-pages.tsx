@@ -610,6 +610,36 @@ export function LegacyGenericPage({ page }: { page: ContentItem }) {
   );
 }
 
+function LegacyAboutPartnerCarousel() {
+  const partnerImages = [
+    "HSL.png",
+    "2023/09/1.png",
+    "2023/09/2.png",
+    "HSL.png",
+    "2023/09/1.png",
+    "2023/09/2.png",
+  ].map((name) => siteData.media.find((media) => media.originalUploadPath.includes(name))?.fullSrc);
+
+  return (
+    <div id="patnar-logo" className="pt-40 pb-80 gray-bg">
+      <div className="container">
+        <LegacySlider className="row patnar-slied" kind="partner">
+          {partnerImages.map((image, index) => (
+            <div className="col-lg-12" key={`${image}-${index}`}>
+              <div className="singel-patnar text-center mt-40">
+                {image ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={image} alt="Logo" />
+                ) : null}
+              </div>
+            </div>
+          ))}
+        </LegacySlider>
+      </div>
+    </div>
+  );
+}
+
 function LegacyAboutUsPage() {
   const content = staticPageContent["about-us"];
   const certificates = siteData.media.filter((media) =>
@@ -891,6 +921,7 @@ function LegacyAboutUsPage() {
           </LegacySlider>
         </div>
       </section>
+      <LegacyAboutPartnerCarousel />
     </LegacyShell>
   );
 }
