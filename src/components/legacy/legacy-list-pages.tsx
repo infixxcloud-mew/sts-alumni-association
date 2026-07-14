@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getPaginationWindow } from "@/components/legacy/legacy-interactions";
 import { LegacyCounter } from "@/components/legacy/legacy-counter";
+import { LegacySlider } from "@/components/legacy/legacy-slider";
 import { LegacyPageBanner, LegacySectionTitle, LegacyShell } from "@/components/legacy/legacy-shell";
 import type { Album, ContentItem } from "@/lib/site-data";
 import { displayDate, itemImage, siteData } from "@/lib/site-data";
@@ -611,6 +612,41 @@ export function LegacyGenericPage({ page }: { page: ContentItem }) {
 
 function LegacyAboutUsPage() {
   const content = staticPageContent["about-us"];
+  const certificates = siteData.media.filter((media) =>
+    media.originalUploadPath.includes("pendaftaran-alumni_page"),
+  );
+  const testimonials = [
+    {
+      imageName: "Wong-Siong-Nee",
+      name: "黄祥尼",
+      role: "校友会 - 主席",
+      text: "在这个充满活力和热情的校友大家庭中，我看到了无限的潜力和机会。我们校友会的使命是连接我们的校友，促进合作和交流，并为校友们提供支持和资源。在未来的日子里，我希望我们能够继续努力，让校友会变得更加强大和有意义。",
+    },
+    {
+      imageName: "Lau-Ben-Hai",
+      name: "刘孟海",
+      role: "校友会 - 副主席",
+      text: "我非常高兴能够与大家共同为校友会的使命而努力。我们的校友大家庭是一个充满温暖和团结的地方，我相信我们可以一起取得更多成就。",
+    },
+    {
+      imageName: "范昌安",
+      name: "范昌安",
+      role: "校友会 - 副主席",
+      text: "在副主席的职务下，我承诺将竭尽所能，协助主席和校友会委员会，确保校友会的活动和项目能够顺利进行。我鼓励每一位校友积极参与，分享你们的想法和建议，因为我们是校友会成功的关键。 ",
+    },
+    {
+      imageName: "陈友胜",
+      name: "陈友胜",
+      role: "校友会 - 秘书",
+      text: "我有幸能够记录下我们的活动和决策，以及与校友们保持联系。我将努力确保校友会的日常工作顺利进行，并为校友们提供所需的支持。 ",
+    },
+    {
+      imageName: "Wong-Lin-Chui",
+      name: "黄羚翠",
+      role: "校友会 - 财政",
+      text: "坚实的财政基础是我们成功的见证。通过明智的资金管理和财政决策，我们已经实现了财务稳健，为学校的未来奠定了坚实的基础。 ",
+    },
+  ];
   const aboutItems = [
     {
       text: "我们的校友社群拥有各行各业的卓越人才，无论是在职业生涯还是社会活动中，他们都取得了杰出的成就。我们致力于建立一个紧密联系的社群，校友之间相互支持、鼓励和合作，共同实现个人和集体的目标。",
@@ -738,6 +774,121 @@ function LegacyAboutUsPage() {
               );
             })}
           </div>
+        </div>
+      </section>
+
+      <section id="sijil-part" className="pt-65 pb-120">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-5">
+              <div className="section-title mt-50 pb-35">
+                <h5>发展历程</h5>
+                <h2>注册证书</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="gallery" className="container-fluid pt-50 gray-bg pb-90">
+          {certificates.map((certificate) => {
+            const src = certificate.fullSrc || certificate.thumbSrc;
+            if (!src) return null;
+
+            return (
+              <a data-legacy-lightbox href={src} key={certificate.id}>
+                <Image
+                  src={src}
+                  alt=""
+                  className="img-responsive"
+                  width={certificate.fullWidth || 1200}
+                  height={certificate.fullHeight || 1700}
+                  sizes="100vw"
+                />
+              </a>
+            );
+          })}
+        </div>
+      </section>
+
+      <section id="about-page-extra" className="pt-10 pb-180">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-6">
+              <div className="about-image mt-50">
+                <iframe
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  height="315"
+                  src="https://www.youtube.com/embed/4CtdjKwQbwI?si=4spCLyyHs1pLxp3b"
+                  title="YouTube video player"
+                  width="100%"
+                />
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="section-title mt-50">
+                <h2>传承价值观</h2>
+              </div>
+              <div className="about-cont">
+                <p>
+                  作为一所具有丰富历史和声誉的学校，我们校友会的使命是继承和传承学校的精神，将校友们联系在一起。我们相信，通过校友会，我们可以共同创造更多的机会，推动彼此的发展。
+                  <br />
+                  <br />
+                  如果你是我们的校友，或者对我们的校友会感兴趣，欢迎与我们联系。我们期待与你分享更多关于校友会的信息，以及在未来与你共同创造更多精彩的时刻。让我们共同携手，为我们的校友会写下崭新的篇章！
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="testimonial"
+        className="bg_cover pt-115 pb-115"
+        data-overlay="6"
+        style={{ backgroundImage: "url(/legacy-theme/images/testimonial-background.jpg)" }}
+      >
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-6">
+              <div className="section-title pb-40">
+                <h5>见证</h5>
+                <h2>校友感言</h2>
+              </div>
+            </div>
+          </div>
+          <LegacySlider className="row testimonial-slied mt-40" kind="testimonial">
+            {testimonials.map((testimonial) => {
+              const image = siteData.media.find((media) =>
+                media.originalUploadPath.includes(testimonial.imageName),
+              );
+
+              return (
+                <div className="col-lg-6" key={testimonial.name}>
+                  <div className="singel-testimonial">
+                    {image ? (
+                      <div className="testimonial-thum">
+                        <Image
+                          src={image.thumbSrc || image.fullSrc}
+                          alt={testimonial.name}
+                          width={90}
+                          height={120}
+                          sizes="90px"
+                        />
+                        <div className="quote">
+                          <i className="fa fa-quote-right" aria-hidden="true" />
+                        </div>
+                      </div>
+                    ) : null}
+                    <div className="testimonial-cont">
+                      <p>{testimonial.text}</p>
+                      <h6>{testimonial.name}</h6>
+                      <span>{testimonial.role}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </LegacySlider>
         </div>
       </section>
     </LegacyShell>
