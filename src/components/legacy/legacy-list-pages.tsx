@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getPaginationWindow } from "@/components/legacy/legacy-interactions";
+import { LegacyCounter } from "@/components/legacy/legacy-counter";
 import { LegacyPageBanner, LegacySectionTitle, LegacyShell } from "@/components/legacy/legacy-shell";
 import type { Album, ContentItem } from "@/lib/site-data";
 import { displayDate, itemImage, siteData } from "@/lib/site-data";
@@ -11,6 +13,69 @@ function contentPath(basePath: string, item: ContentItem) {
 
 function albumPath(album: Album) {
   return `/gallery/${encodeURIComponent(album.slug)}`;
+}
+
+function LegacyPagination({
+  basePath,
+  currentPage,
+  pageCount,
+}: {
+  basePath: string;
+  currentPage: number;
+  pageCount: number;
+}) {
+  if (pageCount <= 1) return null;
+
+  const pages =
+    pageCount <= 4
+      ? Array.from({ length: pageCount }, (_, index) => index + 1)
+      : currentPage <= 2
+        ? [1, 2, 3, "dots", pageCount]
+        : currentPage >= pageCount - 1
+          ? [1, "dots", pageCount - 2, pageCount - 1, pageCount]
+          : [1, "dots", currentPage - 1, currentPage, currentPage + 1, "dots-end", pageCount];
+
+  function href(page: number) {
+    return `${basePath}/page/${page}`;
+  }
+
+  return (
+    <nav className="courses-pagination mt-50">
+      <ul className="pagination justify-content-center">
+        <li className="page-item">
+          {currentPage > 1 ? (
+            <Link className="prev page-numbers" href={href(currentPage - 1)}>
+              上一页 &lt;&lt;
+            </Link>
+          ) : null}
+          {pages.map((page) => {
+            if (typeof page === "string") {
+              return (
+                <span className="page-numbers dots" key={page}>
+                  &hellip;
+                </span>
+              );
+            }
+
+            return page === currentPage ? (
+              <span aria-current="page" className="page-numbers current" key={page}>
+                {page}
+              </span>
+            ) : (
+              <Link className="page-numbers" href={href(page)} key={page}>
+                {page}
+              </Link>
+            );
+          })}
+          {currentPage < pageCount ? (
+            <Link className="next page-numbers" href={href(currentPage + 1)}>
+              下一页 &gt;&gt;
+            </Link>
+          ) : null}
+        </li>
+      </ul>
+    </nav>
+  );
 }
 
 export function LegacyAlbumCard({ album }: { album: Album }) {
@@ -51,25 +116,30 @@ export function LegacyAlbumCard({ album }: { album: Album }) {
   );
 }
 
-export function LegacyGalleryListPage({ albums }: { albums: Album[] }) {
+export function LegacyGalleryListPage({ albums, page = 1 }: { albums: Album[]; page?: number }) {
+  const pagination = getPaginationWindow(albums.length, 6, page);
+  const visibleAlbums = albums.slice(pagination.start, pagination.end);
+
   return (
     <LegacyShell active="gallery">
       <LegacyPageBanner title="全部相册" crumb="相册" />
       <section id="gallery-list" className="pt-90 pb-120 gray-bg">
         <div className="container">
           <div className="row">
-            <div className="col-lg-12">
-              <div className="legacy-list-count">
-                显示{albums.length}个相册的其中的{Math.min(6, albums.length)}个
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            {albums.slice(0, 6).map((album) => (
+            {visibleAlbums.map((album) => (
               <div className="col-lg-4 col-md-6" key={album.id}>
                 <LegacyAlbumCard album={album} />
               </div>
             ))}
+          </div>
+          <div className="row">
+            <div className="col-lg-12">
+              <LegacyPagination
+                basePath="/gallery"
+                currentPage={pagination.currentPage}
+                pageCount={pagination.pageCount}
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -132,9 +202,8 @@ export function LegacyAlbumDetailPage({ album }: { album: Album }) {
                     <a
                       href={photo.fullSrc || src}
                       className="legacy-photo"
+                      data-legacy-lightbox
                       key={photo.id}
-                      target="_blank"
-                      rel="noreferrer"
                     >
                       <Image
                         src={src}
@@ -190,7 +259,10 @@ export function LegacyMemoryListItem({ item }: { item: ContentItem }) {
   );
 }
 
-export function LegacyMemoryListPage({ memories }: { memories: ContentItem[] }) {
+export function LegacyMemoryListPage({ memories, page = 1 }: { memories: ContentItem[]; page?: number }) {
+  const pagination = getPaginationWindow(memories.length, 6, page);
+  const visibleMemories = memories.slice(pagination.start, pagination.end);
+
   return (
     <LegacyShell active="memory">
       <LegacyPageBanner title="全部回忆" crumb="回忆" />
@@ -198,9 +270,14 @@ export function LegacyMemoryListPage({ memories }: { memories: ContentItem[] }) 
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
-              {memories.map((item) => (
+              {visibleMemories.map((item) => (
                 <LegacyMemoryListItem key={item.id} item={item} />
               ))}
+              <LegacyPagination
+                basePath="/memory"
+                currentPage={pagination.currentPage}
+                pageCount={pagination.pageCount}
+              />
             </div>
           </div>
         </div>
@@ -247,9 +324,14 @@ export function LegacyAnnouncementCard({ item }: { item: ContentItem }) {
 
 export function LegacyAnnouncementListPage({
   announcements,
+  page = 1,
 }: {
   announcements: ContentItem[];
+  page?: number;
 }) {
+  const pagination = getPaginationWindow(announcements.length, 2, page);
+  const visibleAnnouncements = announcements.slice(pagination.start, pagination.end);
+
   return (
     <LegacyShell active="announcement">
       <LegacyPageBanner title="全部通告" crumb="通告" />
@@ -257,9 +339,14 @@ export function LegacyAnnouncementListPage({
         <div className="container">
           <div className="row">
             <div className="col-lg-8">
-              {announcements.map((item) => (
+              {visibleAnnouncements.map((item) => (
                 <LegacyAnnouncementCard key={item.id} item={item} />
               ))}
+              <LegacyPagination
+                basePath="/announcement"
+                currentPage={pagination.currentPage}
+                pageCount={pagination.pageCount}
+              />
             </div>
             <div className="col-lg-4">
               <LegacySidebar
@@ -459,6 +546,10 @@ export function LegacyGenericPage({ page }: { page: ContentItem }) {
     return <LegacyContactPage page={page} />;
   }
 
+  if (page.slug === "about-us") {
+    return <LegacyAboutUsPage />;
+  }
+
   return (
     <LegacyShell active={active}>
       <LegacyPageBanner
@@ -511,6 +602,141 @@ export function LegacyGenericPage({ page }: { page: ContentItem }) {
                 ) : null}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+    </LegacyShell>
+  );
+}
+
+function LegacyAboutUsPage() {
+  const content = staticPageContent["about-us"];
+  const aboutItems = [
+    {
+      text: "我们的校友社群拥有各行各业的卓越人才，无论是在职业生涯还是社会活动中，他们都取得了杰出的成就。我们致力于建立一个紧密联系的社群，校友之间相互支持、鼓励和合作，共同实现个人和集体的目标。",
+      title: "为什么是我们",
+    },
+    ...(content.sections || []),
+  ];
+
+  return (
+    <LegacyShell active="about">
+      <LegacyPageBanner title="关于我们" crumb="校友会详情" />
+
+      <section id="about-page" className="pt-70 pb-110">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-6">
+              <div className="section-title mt-50">
+                <h5>{content.eyebrow}</h5>
+                <h2>{content.heading}</h2>
+              </div>
+              <div className="about-cont">
+                <p>
+                  {content.paragraphs[0]}
+                  <br />
+                  <br />
+                  {content.paragraphs[1]}
+                </p>
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="about-image mt-50">
+                <Image
+                  src="/legacy-theme/images/about-welcome.jpg"
+                  alt=""
+                  width={570}
+                  height={380}
+                  sizes="(max-width: 991px) 100vw, 50vw"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="about-items pt-60">
+            <div className="row justify-content-center">
+              {aboutItems.map((item, index) => (
+                <div className="col-lg-4 col-md-6 col-sm-10" key={item.title}>
+                  <div className="about-singel-items mt-30">
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <h4>{item.title}</h4>
+                    <p>{item.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div
+        id="counter-part"
+        className="bg_cover pt-65 pb-110"
+        data-overlay="5"
+        style={{
+          backgroundImage: "url(/legacy-theme/images/about-donate.jpg)",
+          backgroundPositionY: "63%",
+        }}
+      >
+        <div className="container">
+          <div className="row">
+            {[
+              { label: "校友会活动数量", total: 30000 },
+              { label: "众筹资金总额", total: 41000 },
+              { label: "校友参与人数", total: 11000 },
+            ].map((counter) => (
+              <div className="col-lg-4 col-sm-6" key={counter.label}>
+                <div className="singel-counter text-center mt-40">
+                  <span>
+                    <LegacyCounter total={counter.total} />+
+                  </span>
+                  <p>{counter.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <section id="teachers-part" className="pt-65 pb-120">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-5">
+              <div className="section-title mt-50 pb-35">
+                <h5>委员会</h5>
+                <h2>校友会执委</h2>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            {siteData.committees.map((member) => {
+              const image = member.image?.fullSrc || member.image?.thumbSrc;
+              const name = String(member.fields.name || member.title);
+              const position = String(member.fields.position || member.title);
+
+              return (
+                <div className="col-lg-3 col-sm-6" key={member.id}>
+                  <div className="singel-teachers mt-30 text-center">
+                    <div className="image legacy-teacher-image">
+                      {image ? (
+                        <Image
+                          src={image}
+                          alt={name}
+                          width={270}
+                          height={350}
+                          sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 25vw"
+                        />
+                      ) : null}
+                    </div>
+                    <div className="cont">
+                      <a href="javascript:;">
+                        <h6>{name}</h6>
+                      </a>
+                      <span>{position}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

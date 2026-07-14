@@ -350,3 +350,121 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.legacy-site .slick-current [data-animation] {
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
+.legacy-site .slick-current [data-animation="bounceInLeft"] {
+  animation-name: bounceInLeft;
+}
+
+.legacy-site .slick-current [data-animation="fadeInUp"] {
+  animation-name: fadeInUp;
+}
+
+.legacy-site .category-slied .singel-category {
+  display: block;
+  min-height: 0;
+}
+
+.legacy-site .category-slied .singel-category .icon {
+  display: block;
+}
+
+.legacy-site .category-slied .singel-category .icon img {
+  height: 81px;
+  margin: 0 auto;
+  width: auto;
+}
+
+.legacy-site .feature ul li .singel-feature {
+  background: transparent;
+  border: 0;
+  min-height: 0;
+  padding: 55px 0 0;
+}
+
+.legacy-site .feature ul li .singel-feature .cont p {
+  margin-top: 0;
+}
+
+.legacy-site .legacy-lightbox {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 40px 20px;
+  position: fixed;
+  z-index: 2000;
+}
+
+.legacy-site .legacy-lightbox-content {
+  max-height: 100%;
+  max-width: min(960px, 100%);
+  position: relative;
+}
+
+.legacy-site .legacy-lightbox-content > img,
+.legacy-site .legacy-lightbox-content > span,
+.legacy-site .legacy-lightbox-content > span img {
+  display: block;
+  height: auto;
+  max-height: calc(100vh - 80px);
+  max-width: 100%;
+  width: auto;
+}
+
+.legacy-site .legacy-video-frame {
+  aspect-ratio: 16 / 9;
+  width: min(900px, calc(100vw - 40px));
+}
+
+.legacy-site .legacy-video-frame iframe {
+  border: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.legacy-site .legacy-lightbox-close {
+  background: transparent;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+  font-size: 34px;
+  line-height: 1;
+  position: absolute;
+  right: -28px;
+  top: -34px;
+  z-index: 1;
+}
+
+@media (max-width: 991px) {
+  .legacy-site .navigation .navbar .navbar-nav li .sub-menu {
+    display: none;
+  }
+
+  .legacy-site .navigation .navbar .navbar-nav li .sub-menu.legacy-submenu-open {
+    display: block;
+  }
+
+  .legacy-site .navigation .navbar .navbar-nav li > .sub-nav-toggler {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    display: block;
+    padding: 5px;
+    position: absolute;
+    right: 0;
+    top: 5px;
+  }
+}
+
+@media (max-width: 575px) {
+  .legacy-site .legacy-lightbox-close {
+    right: 0;
+    top: -38px;
+  }
+}

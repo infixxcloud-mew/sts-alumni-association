@@ -65,6 +65,18 @@ const navItems: NavItem[] = [
 
 export function LegacyNav({ active }: { active: LegacyActive }) {
   const [open, setOpen] = useState(false);
+  const [openSubmenus, setOpenSubmenus] = useState<string[]>([]);
+
+  function closeNavigation() {
+    setOpen(false);
+    setOpenSubmenus([]);
+  }
+
+  function toggleSubmenu(href: string) {
+    setOpenSubmenus((current) =>
+      current.includes(href) ? current.filter((value) => value !== href) : [...current, href],
+    );
+  }
 
   return (
     <nav className="navbar navbar-expand-lg">
@@ -101,20 +113,32 @@ export function LegacyNav({ active }: { active: LegacyActive }) {
               <Link
                 href={item.href}
                 className={item.active === active ? "active" : undefined}
-                onClick={() => setOpen(false)}
+                onClick={closeNavigation}
               >
                 {item.label}
               </Link>
               {item.children ? (
-                <ul className="sub-menu">
-                  {item.children.map((child) => (
-                    <li key={child.href}>
-                      <Link href={child.href} onClick={() => setOpen(false)}>
-                        {child.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                <>
+                  <button
+                    type="button"
+                    className="sub-nav-toggler"
+                    aria-expanded={openSubmenus.includes(item.href)}
+                    onClick={() => toggleSubmenu(item.href)}
+                  >
+                    <i className="fa fa-chevron-down" aria-hidden="true" />
+                  </button>
+                  <ul
+                    className={`sub-menu${openSubmenus.includes(item.href) ? " legacy-submenu-open" : ""}`}
+                  >
+                    {item.children.map((child) => (
+                      <li key={child.href}>
+                        <Link href={child.href} onClick={closeNavigation}>
+                          {child.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </>
               ) : null}
             </li>
           ))}

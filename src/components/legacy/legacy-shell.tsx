@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { LegacyInteractionLayer } from "@/components/legacy/legacy-interaction-layer";
 import { siteData } from "@/lib/site-data";
 import { LegacyNav, type LegacyActive } from "@/components/legacy/legacy-nav";
 
@@ -41,6 +42,7 @@ export function LegacyShell({
         <LegacyHeader active={active} />
         <main>{children}</main>
         <LegacyFooter />
+        <LegacyInteractionLayer />
       </div>
     </>
   );
@@ -75,8 +77,10 @@ export function LegacyPageBanner({
     <section
       id="page-banner"
       className="pt-105 pb-110 bg_cover"
+      data-overlay="6"
       style={{
-        backgroundImage: `linear-gradient(rgba(7, 41, 77, 0.72), rgba(7, 41, 77, 0.72)), url(${image})`,
+        backgroundImage: `url(${image})`,
+        backgroundPositionY: "63%",
       }}
     >
       <div className="container">

@@ -1,16 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
-import { LegacyAlbumCard, LegacyAnnouncementCard } from "@/components/legacy/legacy-list-pages";
+import { LegacyAlbumCard } from "@/components/legacy/legacy-list-pages";
 import { LegacySectionTitle, LegacyShell } from "@/components/legacy/legacy-shell";
+import { LegacySlider } from "@/components/legacy/legacy-slider";
 import type { Album, ContentItem } from "@/lib/site-data";
-import { siteData } from "@/lib/site-data";
+import { displayDate, itemImage, siteData } from "@/lib/site-data";
 
 const categories = [
-  "互助社群",
-  "持续学习和发展",
-  "卓越知识共享",
-  "荣誉与奖励",
-  "精心策划活动",
+  { image: "Daco_449945-e1694688404241.png", title: "互助社群" },
+  { image: "/legacy-theme/images/all-icon/ctg-2.png", title: "持续学习和发展" },
+  { image: "/legacy-theme/images/all-icon/ctg-3.png", title: "卓越知识共享" },
+  { image: "Daco_172611-e1694688391554.png", title: "荣誉与奖励" },
+  { image: "Daco_4413866-e1694688417110.png", title: "精心策划活动" },
 ];
 
 const resources = [
@@ -94,6 +95,78 @@ function memberPosition(member: ContentItem) {
   return String(member.fields.position || member.title);
 }
 
+function LegacyHomeAnnouncement({ item, featured = false }: { item: ContentItem; featured?: boolean }) {
+  const image = itemImage(item);
+  const href = `/announcement/${encodeURIComponent(item.slug)}`;
+  const author = item.fields.author ? String(item.fields.author) : "";
+  const thumbnail = image ? (
+    <Link href={href}>
+      <Image
+        src={image}
+        alt={item.title}
+        width={featured ? 570 : 180}
+        height={featured ? 270 : 130}
+        sizes={featured ? "(max-width: 991px) 100vw, 50vw" : "(max-width: 575px) 100vw, 33vw"}
+      />
+    </Link>
+  ) : null;
+
+  const metadata = (
+    <ul>
+      {displayDate(item) ? (
+        <li>
+          <a href="javascript:;">
+            <i className="fa fa-calendar" aria-hidden="true" />
+            {displayDate(item)}
+          </a>
+        </li>
+      ) : null}
+      {author ? (
+        <li>
+          <a href="javascript:;">
+            <i className="fa fa-user" aria-hidden="true" />
+            {author}
+          </a>
+        </li>
+      ) : null}
+    </ul>
+  );
+
+  if (featured) {
+    return (
+      <div className="singel-news mt-30">
+        <div className="news-thum pb-25">{thumbnail}</div>
+        <div className="news-cont">
+          {metadata}
+          <Link href={href}>
+            <h3>{item.title}</h3>
+          </Link>
+          {item.excerpt ? <p>{item.excerpt}</p> : null}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="singel-news news-list">
+      <div className="row">
+        <div className="col-sm-4">
+          <div className="news-thum mt-30">{thumbnail}</div>
+        </div>
+        <div className="col-sm-8">
+          <div className="news-cont mt-30">
+            {metadata}
+            <Link href={href}>
+              <h3>{item.title}</h3>
+            </Link>
+            {item.excerpt ? <p>{item.excerpt}</p> : null}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function LegacyHomePage({
   albums,
   announcements,
@@ -104,42 +177,74 @@ export function LegacyHomePage({
   memories: ContentItem[];
   committees: ContentItem[];
 }) {
-  const heroImage = mediaByName("Snapseed-4-scaled.jpg") || albums[0]?.coverFullSrc;
   const featuredAlbums = albums.slice(0, 6);
-  const featuredAnnouncements = announcements.slice(0, 3);
+  const featuredAnnouncements = announcements.slice(0, 4);
   const committeePreview = committees.slice(0, 4);
+  const heroSlides = [
+    {
+      image: mediaByName("Snapseed-4-scaled.jpg") || albums[0]?.coverFullSrc,
+      position: "60%",
+      text: "我们的社群汇聚了志同道合的人们，传承了丰富的历史，鼓舞着彼此，共同书写卓越的故事，憧憬前程无限",
+      title: "连接、传承、共创：致力于卓越的家园",
+    },
+    {
+      image: mediaByName("Snapseed-5-scaled.jpg"),
+      position: "60%",
+      text: "这里，我们凝聚在一起，以深厚的传统为支撑，激励着彼此，一同探寻无限可能，共同创造卓越成就的明天",
+      title: "共铸卓越：团结在梦想的坚实基石上",
+    },
+    {
+      image: mediaByName("Snapseed-6-scaled.jpg"),
+      position: "30%",
+      text: "细致追溯着光辉灿烂的历史，共同铸造未来令人瞩目的卓越故事，成为连接着过去与未来的坚实纽带",
+      title: "追溯荣光，塑造卓越：共同的故事",
+    },
+  ];
 
   return (
     <LegacyShell active="home">
-      <section id="slider-part" className="slider-active">
-        <div
-          className="single-slider bg_cover pt-150"
-          style={{
-            backgroundImage: `linear-gradient(rgba(7, 41, 77, 0.35), rgba(7, 41, 77, 0.35)), url(${heroImage})`,
-          }}
-        >
-          <div className="container">
-            <div className="row">
-              <div className="col-xl-7 col-lg-9">
-                <div className="slider-cont">
-                  <h1 data-animation="fadeInUp" data-delay="1s">
-                    连接、传承、共创：致力于卓越的家园
-                  </h1>
-                  <p data-animation="fadeInUp" data-delay="1.3s">
-                    我们的社群汇聚了志同道合的人们，传承了丰富的历史，鼓舞着彼此，共同书写卓越的故事，憧憬前程无限
-                  </p>
-                  <ul>
-                    <li>
-                      <Link className="main-btn" href="#about-part">
-                        往下阅读
-                      </Link>
-                    </li>
-                  </ul>
+      <section id="slider-part">
+        <LegacySlider className="slider-active" kind="hero">
+          {heroSlides.map((slide) => (
+            <div
+              className="single-slider bg_cover pt-150"
+              data-overlay="4"
+              key={slide.title}
+              style={{
+                backgroundImage: `url(${slide.image})`,
+                backgroundPositionY: slide.position,
+              }}
+            >
+              <div className="container">
+                <div className="row">
+                  <div className="col-xl-7 col-lg-9">
+                    <div className="slider-cont">
+                      <h1 data-animation="bounceInLeft" data-delay="1s" style={{ animationDelay: "1s" }}>
+                        {slide.title}
+                      </h1>
+                      <p data-animation="fadeInUp" data-delay="1.3s" style={{ animationDelay: "1.3s" }}>
+                        {slide.text}
+                      </p>
+                      <ul>
+                        <li>
+                          <Link
+                            className="main-btn"
+                            data-animation="fadeInUp"
+                            data-delay="1.6s"
+                            href="#about-part"
+                            style={{ animationDelay: "1.6s" }}
+                          >
+                            往下阅读
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          ))}
+        </LegacySlider>
       </section>
 
       <section id="category-part">
@@ -151,19 +256,31 @@ export function LegacyHomePage({
                   <h2>探索卓越辉煌之旅，与我们一同书写传奇</h2>
                 </div>
               </div>
-              <div className="col-lg-8">
-                <div className="row">
-                  {categories.map((category, index) => (
-                    <div className="col-lg-4" key={category}>
-                      <div className={`singel-category text-center color-${(index % 3) + 1} mt-40`}>
-                        <span className="legacy-category-icon">{String(index + 1).padStart(2, "0")}</span>
-                        <div className="cont">
-                          <span>{category}</span>
-                        </div>
+              <div className="col-lg-6 offset-lg-1 col-md-8 offset-md-2 col-sm-8 offset-sm-2 col-8 offset-2">
+                <LegacySlider className="row category-slied mt-40" kind="category">
+                  {categories.map((category, index) => {
+                    const image = category.image.startsWith("/")
+                      ? category.image
+                      : mediaByName(category.image);
+
+                    return (
+                      <div className="col-lg-4" key={category.title}>
+                        <a href="javascript:;">
+                          <span className={`singel-category text-center color-${(index % 3) + 1}`}>
+                            <span className="icon">
+                              {image ? (
+                                <Image src={image} alt="" width={100} height={81} sizes="100px" />
+                              ) : null}
+                            </span>
+                            <span className="cont">
+                              <span>{category.title}</span>
+                            </span>
+                          </span>
+                        </a>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    );
+                  })}
+                </LegacySlider>
               </div>
             </div>
           </div>
@@ -255,6 +372,63 @@ export function LegacyHomePage({
         </div>
       </section>
 
+      <div className="container">
+        <div className="row">
+          <div className="col-lg-6">
+            <div className="section-title pb-25">
+              <h5>2023年校友筑梦工程</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section id="slider-part-edu">
+        <LegacySlider className="slider-active" kind="hero">
+          {[
+            "/legacy-theme/images/digital-learning-center-3-2.jpeg",
+            "/legacy-theme/images/digital-learning-center-3-1.jpeg",
+            "/legacy-theme/images/digital-learning-center-1-2.jpg",
+            "/legacy-theme/images/digital-learning-center-1-1.jpg",
+          ].map((image) => (
+            <div
+              className="single-slider bg_cover pt-150"
+              data-overlay="4"
+              key={image}
+              style={{ backgroundImage: `url(${image})` }}
+            >
+              <div className="container" style={{ paddingTop: "9%" }}>
+                <div className="row">
+                  <div className="col-md-12">
+                    <div className="slider-cont">
+                      <h1
+                        data-animation="bounceInLeft"
+                        data-delay="1s"
+                        style={{ animationDelay: "1s", textAlign: "center" }}
+                      >
+                        数码学习中心
+                      </h1>
+                      <ul style={{ textAlign: "center" }}>
+                        <li>
+                          <Link
+                            className="main-btn"
+                            data-animation="fadeInUp"
+                            data-delay="1.6s"
+                            href="/education-foundation-contribution"
+                            style={{ animationDelay: "1.6s" }}
+                          >
+                            (1939-1970)华侨校友贡献
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </LegacySlider>
+      </section>
+
       <section id="course-part" className="pt-115 pb-120 gray-bg">
         <div className="container">
           <div className="row">
@@ -262,13 +436,13 @@ export function LegacyHomePage({
               <LegacySectionTitle eyebrow="相册" title="精选相册" />
             </div>
           </div>
-          <div className="row course-slied mt-30">
+          <LegacySlider className="row course-slied mt-30" kind="course">
             {featuredAlbums.map((album) => (
               <div className="col-lg-4 col-md-6" key={album.id}>
                 <LegacyAlbumCard album={album} />
               </div>
             ))}
-          </div>
+          </LegacySlider>
         </div>
       </section>
 
@@ -276,8 +450,7 @@ export function LegacyHomePage({
         id="video-feature"
         className="bg_cover pt-60 pb-110"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(7, 41, 77, 0.86), rgba(7, 41, 77, 0.86)), url(/legacy-theme/images/video-banner-1.jpg)",
+          backgroundImage: "url(/legacy-theme/images/video-banner-1.jpg)",
         }}
       >
         <div className="container">
@@ -285,7 +458,7 @@ export function LegacyHomePage({
             <div className="col-lg-6 order-last order-lg-first">
               <div className="video text-lg-left text-center pt-50">
                 <a className="Video-popup" href="https://www.youtube.com/watch?v=IZe-aA0fsp8">
-                  <span className="legacy-play-symbol">▶</span>
+                  <i className="fa fa-play" aria-hidden="true" />
                 </a>
               </div>
             </div>
@@ -295,9 +468,17 @@ export function LegacyHomePage({
                   <h3>校友会资源</h3>
                 </div>
                 <ul>
-                  {resources.map((resource) => (
+                  {resources.map((resource, index) => (
                     <li key={resource.title}>
                       <div className="singel-feature">
+                        <div className="icon">
+                          <Image
+                            src={`/legacy-theme/images/all-icon/f-${index + 1}.png`}
+                            alt=""
+                            width={54}
+                            height={54}
+                          />
+                        </div>
                         <div className="cont">
                           <h4>{resource.title}</h4>
                           <p>{resource.text}</p>
@@ -310,6 +491,7 @@ export function LegacyHomePage({
             </div>
           </div>
         </div>
+        <div className="feature-bg" />
       </section>
 
       <section id="teachers-part" className="pt-70 pb-120">
@@ -371,10 +553,8 @@ export function LegacyHomePage({
       <section
         id="testimonial"
         className="bg_cover pt-115 pb-115"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(7, 41, 77, 0.82), rgba(7, 41, 77, 0.82)), url(/legacy-theme/images/testimonial-background.jpg)",
-        }}
+        data-overlay="6"
+        style={{ backgroundImage: "url(/legacy-theme/images/testimonial-background.jpg)" }}
       >
         <div className="container">
           <div className="row">
@@ -382,7 +562,7 @@ export function LegacyHomePage({
               <LegacySectionTitle eyebrow="见证" title="校友感言" />
             </div>
           </div>
-          <div className="row testimonial-slied mt-40">
+          <LegacySlider className="row testimonial-slied mt-40" kind="testimonial">
             {testimonials.map((testimonial) => {
               const image = siteData.media.find((media) =>
                 media.originalUploadPath.includes(testimonial.imageName),
@@ -400,6 +580,9 @@ export function LegacyHomePage({
                           height={120}
                           sizes="90px"
                         />
+                        <div className="quote">
+                          <i className="fa fa-quote-right" aria-hidden="true" />
+                        </div>
                       </div>
                     ) : null}
                     <div className="testimonial-cont">
@@ -411,26 +594,55 @@ export function LegacyHomePage({
                 </div>
               );
             })}
+          </LegacySlider>
+        </div>
+      </section>
+
+      <section id="news-part" className="pt-90 pb-110">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-6">
+              <div className="section-title pb-50">
+                <h5>通告</h5>
+                <h2>最新资讯</h2>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-lg-6">
+              {featuredAnnouncements[0] ? (
+                <LegacyHomeAnnouncement featured item={featuredAnnouncements[0]} />
+              ) : null}
+            </div>
+            <div className="col-lg-6">
+              {featuredAnnouncements.slice(1).map((item) => (
+                <LegacyHomeAnnouncement item={item} key={item.id} />
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="blog-part" className="pt-115 pb-120 gray-bg">
+      <div id="patnar-logo" className="pt-40 pb-80 gray-bg">
         <div className="container">
-          <div className="row">
-            <div className="col-lg-6">
-              <LegacySectionTitle eyebrow="通告" title="最新资讯" />
-            </div>
-          </div>
-          <div className="row">
-            {featuredAnnouncements.map((item) => (
-              <div className="col-lg-4 col-md-6" key={item.id}>
-                <LegacyAnnouncementCard item={item} />
+          <LegacySlider className="row patnar-slied" kind="partner">
+            {[
+              mediaByName("HSL.png"),
+              mediaByName("2023/09/1.png"),
+              mediaByName("2023/09/2.png"),
+              mediaByName("HSL.png"),
+              mediaByName("2023/09/1.png"),
+              mediaByName("2023/09/2.png"),
+            ].map((image, index) => (
+              <div className="col-lg-12" key={`${image}-${index}`}>
+                <div className="singel-patnar text-center mt-40">
+                  {image ? <Image src={image} alt="Logo" width={180} height={100} sizes="180px" /> : null}
+                </div>
               </div>
             ))}
-          </div>
+          </LegacySlider>
         </div>
-      </section>
+      </div>
     </LegacyShell>
   );
 }
