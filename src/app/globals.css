@@ -114,6 +114,18 @@ body {
   aspect-ratio: 850 / 520;
 }
 
+.legacy-site .legacy-detail-cover {
+  text-align: center;
+}
+
+.legacy-site .legacy-detail-cover img {
+  aspect-ratio: auto;
+  display: inline-block;
+  margin: 0 auto;
+  object-fit: contain;
+  width: auto;
+}
+
 .legacy-site .legacy-teacher-image img {
   aspect-ratio: 270 / 340;
 }
@@ -435,8 +447,9 @@ body {
 }
 
 .legacy-site .legacy-lightbox-content {
-  max-height: 100%;
-  max-width: min(960px, 100%);
+  max-height: calc(100vh - 80px);
+  max-width: min(960px, calc(100vw - 112px));
+  overflow: auto;
   position: relative;
 }
 
@@ -448,6 +461,11 @@ body {
   max-height: calc(100vh - 80px);
   max-width: 100%;
   width: auto;
+}
+
+.legacy-site .legacy-lightbox-image {
+  transform-origin: center center;
+  transition: transform 0.18s ease;
 }
 
 .legacy-site .legacy-video-frame {
@@ -467,11 +485,59 @@ body {
   color: #fff;
   cursor: pointer;
   font-size: 34px;
+  height: 42px;
   line-height: 1;
-  position: absolute;
-  right: -28px;
-  top: -34px;
-  z-index: 1;
+  position: fixed;
+  right: 24px;
+  top: 20px;
+  width: 42px;
+  z-index: 2;
+}
+
+.legacy-site .legacy-lightbox-control,
+.legacy-site .legacy-lightbox-tool {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.legacy-site .legacy-lightbox-control {
+  border-radius: 50%;
+  font-size: 38px;
+  height: 54px;
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 54px;
+  z-index: 2;
+}
+
+.legacy-site .legacy-lightbox-prev {
+  left: 24px;
+}
+
+.legacy-site .legacy-lightbox-next {
+  right: 24px;
+}
+
+.legacy-site .legacy-lightbox-tools {
+  display: flex;
+  gap: 8px;
+  position: fixed;
+  right: 78px;
+  top: 24px;
+  z-index: 2;
+}
+
+.legacy-site .legacy-lightbox-tool {
+  border-radius: 4px;
+  font-size: 18px;
+  height: 34px;
+  width: 38px;
 }
 
 @media (max-width: 991px) {
@@ -496,8 +562,32 @@ body {
 }
 
 @media (max-width: 575px) {
+  .legacy-site .legacy-lightbox-content {
+    max-width: calc(100vw - 32px);
+  }
+
+  .legacy-site .legacy-lightbox-control {
+    font-size: 28px;
+    height: 42px;
+    width: 42px;
+  }
+
+  .legacy-site .legacy-lightbox-prev {
+    left: 8px;
+  }
+
+  .legacy-site .legacy-lightbox-next {
+    right: 8px;
+  }
+
   .legacy-site .legacy-lightbox-close {
-    right: 0;
-    top: -38px;
+    right: 12px;
+    top: 12px;
+  }
+
+  .legacy-site .legacy-lightbox-tools {
+    left: 12px;
+    right: auto;
+    top: 16px;
   }
 }

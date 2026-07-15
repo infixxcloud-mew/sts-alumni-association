@@ -1,5 +1,5 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import Image from "next/image";
-import Link from "next/link";
 import { LegacyBackgroundSlide } from "@/components/legacy/legacy-background-slide";
 import { LegacySectionTitle, LegacyShell } from "@/components/legacy/legacy-shell";
 import { LegacySlider } from "@/components/legacy/legacy-slider";
@@ -107,11 +107,11 @@ function LegacyHomeAlbumCard({ album }: { album: Album }) {
     <div className="singel-course">
       <div className="thum">
         <div className="image">
-          <Link href={href}>
+          <a href={href}>
             {/* The WordPress card uses a native image element, which preserves its loading and sizing behavior. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={image} alt={album.title} />
-          </Link>
+          </a>
         </div>
         <div className="price">
           <span>
@@ -126,9 +126,9 @@ function LegacyHomeAlbumCard({ album }: { album: Album }) {
           {album.eventDate}
         </span>
         <br />
-        <Link href={href}>
+        <a href={href}>
           <h4>{album.title}</h4>
-        </Link>
+        </a>
         <br />
         <br />
       </div>
@@ -141,7 +141,7 @@ function LegacyHomeAnnouncement({ item, featured = false }: { item: ContentItem;
   const href = `/announcement/${encodeURIComponent(item.slug)}`;
   const author = item.fields.author ? String(item.fields.author) : "";
   const thumbnail = image ? (
-    <Link href={href}>
+    <a href={href}>
       <Image
         src={image}
         alt={item.title}
@@ -149,7 +149,7 @@ function LegacyHomeAnnouncement({ item, featured = false }: { item: ContentItem;
         height={featured ? 270 : 130}
         sizes={featured ? "(max-width: 991px) 100vw, 50vw" : "(max-width: 575px) 100vw, 33vw"}
       />
-    </Link>
+    </a>
   ) : null;
 
   const metadata = (
@@ -179,9 +179,9 @@ function LegacyHomeAnnouncement({ item, featured = false }: { item: ContentItem;
         <div className="news-thum pb-25">{thumbnail}</div>
         <div className="news-cont">
           {metadata}
-          <Link href={href}>
+          <a href={href}>
             <h3>{item.title}</h3>
-          </Link>
+          </a>
           {item.excerpt ? <p>{item.excerpt}</p> : null}
         </div>
       </div>
@@ -197,9 +197,9 @@ function LegacyHomeAnnouncement({ item, featured = false }: { item: ContentItem;
         <div className="col-sm-8">
           <div className="news-cont mt-30">
             {metadata}
-            <Link href={href}>
+            <a href={href}>
               <h3>{item.title}</h3>
-            </Link>
+            </a>
             {item.excerpt ? <p>{item.excerpt}</p> : null}
           </div>
         </div>
@@ -260,7 +260,7 @@ export function LegacyHomePage({
                       </p>
                       <ul>
                         <li>
-                          <Link
+                          <a
                             className="main-btn"
                             data-animation="fadeInUp"
                             data-delay="1.6s"
@@ -268,7 +268,7 @@ export function LegacyHomePage({
                             style={{ animationDelay: "1.6s" }}
                           >
                             往下阅读
-                          </Link>
+                          </a>
                         </li>
                       </ul>
                     </div>
@@ -335,9 +335,9 @@ export function LegacyHomePage({
                   <br />
                   在这里，您将发现丰富的校友资源、精彩的校友故事，以及我们的校友们在各行各业取得的卓越成就。我们骄傲地展示着泗里街高级(华侨)中学的丰富历史和杰出校友们的荣誉传统
                 </p>
-                <Link className="main-btn mt-35" href="/about-us">
+                <a className="main-btn mt-35" href="/about-us">
                   了解更多
-                </Link>
+                </a>
               </div>
             </div>
             <div className="col-lg-6 offset-lg-1">
@@ -350,9 +350,9 @@ export function LegacyHomePage({
                     <li key={item.title}>
                       <div className="singel-event">
                         <span>{item.date}</span>
-                        <Link href="/announcement">
+                        <a href="/announcement">
                           <h4>{item.title}</h4>
-                        </Link>
+                        </a>
                         <span>{item.time}</span>
                         <span>{item.venue}</span>
                       </div>
@@ -384,9 +384,9 @@ export function LegacyHomePage({
                   <p>
                     我们视自己为不断追求创新的探险家，秉承着传承者的责任，将珍贵的历史智慧传承给后代我们是历史书写者，记录下每一个激动人心的瞬间，怀着深沉的敬畏之情回顾过去，热切地憧憬着充满希望的未来，坚信我们的努力将书写卓越的篇章
                   </p>
-                  <Link className="main-btn" href="/gallery">
+                  <a className="main-btn" href="/gallery">
                     瞻仰历史
-                  </Link>
+                  </a>
                 </div>
               </div>
               <div className="col-lg-6">
@@ -395,9 +395,9 @@ export function LegacyHomePage({
                   <p>
                     我们深深扎根于光辉传统的土壤中，不断汲取智慧的养分，我们是那些将目光锁定在光明未来的人，我们志愿成为共同创造光荣故事的伙伴之一，时刻准备着在历史的舞台上发挥我们的作用，为共同的愿景努力奋斗，创造永恒的遗产
                   </p>
-                  <Link className="main-btn" href="/announcement">
+                  <a className="main-btn" href="/announcement">
                     展望前程
-                  </Link>
+                  </a>
                 </div>
               </div>
             </div>
@@ -437,7 +437,7 @@ export function LegacyHomePage({
                       </h1>
                       <ul style={{ textAlign: "center" }}>
                         <li>
-                          <Link
+                          <a
                             className="main-btn"
                             data-animation="fadeInUp"
                             data-delay="1.6s"
@@ -445,7 +445,7 @@ export function LegacyHomePage({
                             style={{ animationDelay: "1.6s" }}
                           >
                             (1939-1970)华侨校友贡献
-                          </Link>
+                          </a>
                         </li>
                       </ul>
                     </div>

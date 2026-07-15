@@ -1,10 +1,10 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from "react";
-import Image from "next/image";
 
 type Lightbox =
-  | { src: string; type: "image" }
+  | { images: string[]; index: number; type: "image" }
   | { src: string; type: "video" };
 
 function youtubeEmbedUrl(url: string) {
@@ -34,7 +34,24 @@ function scrollToTop() {
 
 export function LegacyInteractionLayer() {
   const [lightbox, setLightbox] = useState<Lightbox | null>(null);
+  const [zoom, setZoom] = useState(1);
   const [showBackToTop, setShowBackToTop] = useState(false);
+
+  function showRelativeImage(step: number) {
+    setLightbox((current) => {
+      if (!current || current.type !== "image" || current.images.length === 0) return current;
+
+      setZoom(1);
+      return {
+        ...current,
+        index: (current.index + step + current.images.length) % current.images.length,
+      };
+    });
+  }
+
+  function adjustZoom(step: number) {
+    setZoom((current) => Math.min(3, Math.max(1, Number((current + step).toFixed(2)))));
+  }
 
   useEffect(() => {
     function updateScrollState() {
@@ -56,12 +73,51 @@ export function LegacyInteractionLayer() {
       const image = event.target.closest<HTMLAnchorElement>("a[data-legacy-lightbox]");
       if (image?.href) {
         event.preventDefault();
-        setLightbox({ src: image.href, type: "image" });
+        const group = image.dataset.legacyLightboxGroup;
+        const anchors = Array.from(
+          document.querySelectorAll<HTMLAnchorElement>("a[data-legacy-lightbox]"),
+        ).filter((anchor) => anchor.href && (!group || anchor.dataset.legacyLightboxGroup === group));
+        const images = anchors.map((anchor) => anchor.href);
+        const index = Math.max(0, images.indexOf(image.href));
+
+        setZoom(1);
+        setLightbox({ images: images.length > 0 ? images : [image.href], index, type: "image" });
       }
     }
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") setLightbox(null);
+      if (!lightbox) return;
+
+      if (event.key === "Escape") {
+        setLightbox(null);
+        return;
+      }
+
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault();
+        setLightbox((current) => {
+          if (!current || current.type !== "image" || current.images.length <= 1) return current;
+
+          setZoom(1);
+          const step = event.key === "ArrowLeft" ? -1 : 1;
+          return {
+            ...current,
+            index: (current.index + step + current.images.length) % current.images.length,
+          };
+        });
+        return;
+      }
+
+      if (event.key === "+" || event.key === "=") {
+        event.preventDefault();
+        setZoom((current) => Math.min(3, Number((current + 0.25).toFixed(2))));
+        return;
+      }
+
+      if (event.key === "-" || event.key === "_") {
+        event.preventDefault();
+        setZoom((current) => Math.max(1, Number((current - 0.25).toFixed(2))));
+      }
     }
 
     updateScrollState();
@@ -74,7 +130,7 @@ export function LegacyInteractionLayer() {
       document.removeEventListener("click", handleDocumentClick);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [lightbox]);
 
   return (
     <>
@@ -112,14 +168,52 @@ export function LegacyInteractionLayer() {
                 />
               </div>
             ) : (
-              <Image
-                src={lightbox.src}
-                alt=""
-                width={1600}
-                height={1200}
-                sizes="100vw"
-                unoptimized
-              />
+              <>
+                {lightbox.images.length > 1 ? (
+                  <>
+                    <button
+                      aria-label="Previous image"
+                      className="legacy-lightbox-control legacy-lightbox-prev"
+                      onClick={() => showRelativeImage(-1)}
+                      type="button"
+                    >
+                      <i className="fa fa-angle-left" aria-hidden="true" />
+                    </button>
+                    <button
+                      aria-label="Next image"
+                      className="legacy-lightbox-control legacy-lightbox-next"
+                      onClick={() => showRelativeImage(1)}
+                      type="button"
+                    >
+                      <i className="fa fa-angle-right" aria-hidden="true" />
+                    </button>
+                  </>
+                ) : null}
+                <div className="legacy-lightbox-tools">
+                  <button
+                    aria-label="Zoom out"
+                    className="legacy-lightbox-tool legacy-lightbox-zoom-out"
+                    onClick={() => adjustZoom(-0.25)}
+                    type="button"
+                  >
+                    <i className="fa fa-search-minus" aria-hidden="true" />
+                  </button>
+                  <button
+                    aria-label="Zoom in"
+                    className="legacy-lightbox-tool legacy-lightbox-zoom-in"
+                    onClick={() => adjustZoom(0.25)}
+                    type="button"
+                  >
+                    <i className="fa fa-search-plus" aria-hidden="true" />
+                  </button>
+                </div>
+                <img
+                  className="legacy-lightbox-image"
+                  src={lightbox.images[lightbox.index]}
+                  alt=""
+                  style={{ transform: `scale(${zoom})` }}
+                />
+              </>
             )}
           </div>
         </div>

@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
-import Link from "next/link";
 import { getPaginationWindow } from "@/components/legacy/legacy-interactions";
 import { LegacyCounter } from "@/components/legacy/legacy-counter";
 import { LegacySlider } from "@/components/legacy/legacy-slider";
@@ -94,9 +93,9 @@ function LegacyPagination({
       <ul className={`pagination ${alignmentClassName}`}>
         <li className="page-item">
           {currentPage > 1 ? (
-            <Link className="prev page-numbers" href={href(currentPage - 1)}>
+            <a className="prev page-numbers" href={href(currentPage - 1)}>
               &laquo; Previous
-            </Link>
+            </a>
           ) : null}
           {pages.map((page) => {
             if (typeof page === "string") {
@@ -112,15 +111,15 @@ function LegacyPagination({
                 {page}
               </span>
             ) : (
-              <Link className="page-numbers" href={href(page)} key={page}>
+              <a className="page-numbers" href={href(page)} key={page}>
                 {page}
-              </Link>
+              </a>
             );
           })}
           {currentPage < pageCount ? (
-            <Link className="next page-numbers" href={href(currentPage + 1)}>
+            <a className="next page-numbers" href={href(currentPage + 1)}>
               Next &raquo;
-            </Link>
+            </a>
           ) : null}
         </li>
       </ul>
@@ -135,7 +134,7 @@ export function LegacyAlbumCard({ album }: { album: Album }) {
     <div className="singel-course mt-30">
       <div className="thum">
         <div className="image">
-          <Link href={href}>
+          <a href={href}>
             {album.coverSrc ? (
               <Image
                 src={album.coverSrc}
@@ -147,7 +146,7 @@ export function LegacyAlbumCard({ album }: { album: Album }) {
             ) : (
               <span className="legacy-image-placeholder">相册</span>
             )}
-          </Link>
+          </a>
         </div>
         <div className="price">
           <span>{album.eventYear || "相册"}</span>
@@ -155,9 +154,9 @@ export function LegacyAlbumCard({ album }: { album: Album }) {
       </div>
       <div className="cont">
         {album.eventDate ? <span>{album.eventDate}</span> : null}
-        <Link href={href}>
+        <a href={href}>
           <h4>{album.title}</h4>
-        </Link>
+        </a>
         {album.description ? (
           <p className="gallery-description">{album.description}</p>
         ) : null}
@@ -290,6 +289,7 @@ export function LegacyAlbumDetailPage({ album }: { album: Album }) {
                       href={photo.fullSrc || src}
                       className="legacy-photo"
                       data-legacy-lightbox
+                      data-legacy-lightbox-group={`album-${album.id}`}
                       key={photo.id}
                     >
                       <Image
@@ -299,7 +299,6 @@ export function LegacyAlbumDetailPage({ album }: { album: Album }) {
                         height={210}
                         sizes="(max-width: 767px) 50vw, (max-width: 991px) 33vw, 25vw"
                       />
-                      {photo.title ? <span>{photo.title}</span> : null}
                     </a>
                   );
                 })}
@@ -319,7 +318,7 @@ export function LegacyMemoryListItem({ item }: { item: ContentItem }) {
   return (
     <div className="singel-event-list mt-30">
       <div className="event-thum">
-        <Link href={href}>
+        <a href={href}>
           {image ? (
             <Image
               src={image}
@@ -331,13 +330,13 @@ export function LegacyMemoryListItem({ item }: { item: ContentItem }) {
           ) : (
             <span className="legacy-image-placeholder">回忆</span>
           )}
-        </Link>
+        </a>
       </div>
       <div className="event-cont">
         {iconText("fa-calendar", displayDate(item))}
-        <Link href={href}>
+        <a href={href}>
           <h4>{item.title}</h4>
-        </Link>
+        </a>
         {iconText("fa-clock-o", item.fields.time)}
         {iconText("fa-map-marker", item.fields.venue)}
         {item.excerpt ? <p>{item.excerpt}</p> : null}
@@ -384,18 +383,16 @@ export function LegacyAnnouncementCard({ item }: { item: ContentItem }) {
   return (
     <div className="singel-blog mt-30">
       <div className="blog-thum">
-        <Link href={href}>
+        <a href={href}>
           {image ? (
             <img src={item.image?.fullSrc || image} alt={item.title} />
-          ) : (
-            <span className="legacy-image-placeholder">通告</span>
-          )}
-        </Link>
+          ) : null}
+        </a>
       </div>
       <div className="blog-cont">
-        <Link href={href}>
+        <a href={href}>
           <h3>{item.title}</h3>
-        </Link>
+        </a>
         <ul>
           {displayDate(item) ? (
             <li>
@@ -506,7 +503,7 @@ function LegacyAnnouncementSidebar({ items }: { items: ContentItem[] }) {
 
                 return (
                   <li key={item.id}>
-                    <Link href={contentPath("/announcement", item)}>
+                    <a href={contentPath("/announcement", item)}>
                       <div className="singel-post">
                         <div className="thum">
                           {image ? <img src={image} style={{ width: "120px", height: "90px" }} alt={item.title} /> : null}
@@ -516,7 +513,7 @@ function LegacyAnnouncementSidebar({ items }: { items: ContentItem[] }) {
                           {displayDate(item) ? <span>{displayDate(item)}</span> : null}
                         </div>
                       </div>
-                    </Link>
+                    </a>
                   </li>
                 );
               })}
@@ -567,10 +564,10 @@ function LegacySidebar({
             <ul>
               {items.map((item) => (
                 <li key={item.id}>
-                  <Link href={contentPath(basePath, item)}>
+                  <a href={contentPath(basePath, item)}>
                     <h6>{item.title}</h6>
                     {displayDate(item) ? <span>{displayDate(item)}</span> : null}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -891,7 +888,7 @@ function LegacyEducationContributionListItem({ item }: { item: ContentItem }) {
   return (
     <div className="singel-event-list mt-30">
       <div className="event-thum">
-        <Link href={href}>
+        <a href={href}>
           {image ? (
             <Image
               src={image}
@@ -901,13 +898,13 @@ function LegacyEducationContributionListItem({ item }: { item: ContentItem }) {
               sizes="(max-width: 991px) 100vw, 280px"
             />
           ) : null}
-        </Link>
+        </a>
       </div>
       <div className="event-cont">
         {iconText("fa-calendar", displayDate(item))}
-        <Link href={href}>
+        <a href={href}>
           <h4>{item.title}</h4>
-        </Link>
+        </a>
         {iconText("fa-clock-o", item.fields.time)}
         {iconText("fa-map-marker", item.fields.venue)}
         {item.excerpt ? <p>{item.excerpt}</p> : null}

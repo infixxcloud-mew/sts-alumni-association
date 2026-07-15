@@ -155,3 +155,43 @@ test("keeps sponsor, education, and contact pages on their original WordPress ma
   assert.match(stylesheet, /\.legacy-site \.singel-teachers \.image img \{\s*display: inline;/);
   assert.doesNotMatch(stylesheet, /\.legacy-site \.contact-from,[\s\S]*?\.legacy-site \.contact-address \{\s*padding: 35px;/);
 });
+
+test("keeps legacy public navigation on plain anchors without Next route transitions", async () => {
+  const legacySources = await Promise.all([
+    readFile(resolve("src/components/legacy/legacy-shell.tsx"), "utf8"),
+    readFile(resolve("src/components/legacy/legacy-home.tsx"), "utf8"),
+    readFile(resolve("src/components/legacy/legacy-list-pages.tsx"), "utf8"),
+  ]);
+
+  for (const source of legacySources) {
+    assert.doesNotMatch(source, /import Link from "next\/link"/);
+    assert.doesNotMatch(source, /<Link\b/);
+  }
+
+  const listPages = legacySources[2];
+  assert.match(listPages, /<a className="prev page-numbers" href=\{href\(currentPage - 1\)\}>/);
+  assert.match(listPages, /<a className="next page-numbers" href=\{href\(currentPage \+ 1\)\}>/);
+});
+
+test("keeps announcement archives from rendering placeholder image blocks", async () => {
+  const listPages = await readFile(resolve("src/components/legacy/legacy-list-pages.tsx"), "utf8");
+
+  assert.doesNotMatch(listPages, /legacy-image-placeholder">\u901a\u544a/);
+  assert.match(listPages, /\{image \? \(\s*<img src=\{item\.image\?\.fullSrc \|\| image\} alt=\{item\.title\} \/>[\s\S]*?\) : null\}/);
+});
+
+test("keeps gallery detail photos centered, captionless, and controlled by the legacy lightbox", async () => {
+  const [listPages, interactionLayer, stylesheet] = await Promise.all([
+    readFile(resolve("src/components/legacy/legacy-list-pages.tsx"), "utf8"),
+    readFile(resolve("src/components/legacy/legacy-interaction-layer.tsx"), "utf8"),
+    readFile(resolve("src/app/globals.css"), "utf8"),
+  ]);
+
+  assert.match(stylesheet, /\.legacy-site \.legacy-detail-cover \{[\s\S]*?text-align: center;/);
+  assert.match(stylesheet, /\.legacy-site \.legacy-detail-cover img \{[\s\S]*?margin: 0 auto;/);
+  assert.doesNotMatch(listPages, /\{photo\.title \? <span>\{photo\.title\}<\/span> : null\}/);
+  assert.match(interactionLayer, /legacy-lightbox-prev/);
+  assert.match(interactionLayer, /legacy-lightbox-next/);
+  assert.match(interactionLayer, /legacy-lightbox-zoom-in/);
+  assert.match(interactionLayer, /legacy-lightbox-zoom-out/);
+});

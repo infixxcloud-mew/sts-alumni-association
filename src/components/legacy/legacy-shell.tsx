@@ -1,5 +1,5 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import Image from "next/image";
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { LegacyInteractionLayer } from "@/components/legacy/legacy-interaction-layer";
 import { siteData } from "@/lib/site-data";
@@ -95,7 +95,7 @@ export function LegacyPageBanner({
               <nav aria-label="breadcrumb">
                 <ol className="breadcrumb">
                   <li className="breadcrumb-item">
-                    <Link href="/">主页</Link>
+                    <a href="/">主页</a>
                   </li>
                   <li className="breadcrumb-item active" aria-current="page">
                     {crumb}
@@ -136,14 +136,14 @@ export function LegacyFooter() {
             <div className="col-lg-4 col-md-6">
               <div className="footer-about mt-15">
                 <div className="logo">
-                  <Link href="/">
+                  <a href="/">
                     <Image
                       src="/legacy-theme/images/logo-2.png"
                       alt={siteData.title}
                       width={180}
                       height={78}
                     />
-                  </Link>
+                  </a>
                 </div>
                 <p>
                   共同秉承着华侨精神，骄傲地凝聚了辉煌的过去，并在未来不懈筑梦，追求卓越的教育使命。我们致力于连接校友，传承学校的光荣传统，激发更多的卓越成就。
@@ -175,30 +175,30 @@ export function LegacyFooter() {
                 </div>
                 <ul>
                   <li>
-                    <Link href="/about-us">关于我们</Link>
+                    <a href="/about-us">关于我们</a>
                   </li>
                   <li>
-                    <Link href="/committee">委员会</Link>
+                    <a href="/committee">委员会</a>
                   </li>
                   <li>
-                    <Link href="/announcement">文章</Link>
+                    <a href="/announcement">文章</a>
                   </li>
                   <li>
-                    <Link href="/gallery">相册</Link>
+                    <a href="/gallery">相册</a>
                   </li>
                 </ul>
                 <ul>
                   <li>
-                    <Link href="/education-foundation">教育基金</Link>
+                    <a href="/education-foundation">教育基金</a>
                   </li>
                   <li>
-                    <Link href="/memory">回忆</Link>
+                    <a href="/memory">回忆</a>
                   </li>
                   <li>
-                    <Link href="/contact-us">联络我们</Link>
+                    <a href="/contact-us">联络我们</a>
                   </li>
                   <li>
-                    <Link href="/feedback">网站反馈</Link>
+                    <a href="/feedback">网站反馈</a>
                   </li>
                 </ul>
               </div>
