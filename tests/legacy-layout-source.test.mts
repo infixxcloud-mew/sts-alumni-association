@@ -192,6 +192,9 @@ test("keeps announcement archives from rendering placeholder image blocks", asyn
   assert.match(prepareScript, /-e\\d\+/);
   assert.match(prepareScript, /mediaUrlKey\(item\.originalUploadPath\)/);
   assert.match(verifyScript, /process\.env\.VERIFY_BASE_URL/);
+  assert.match(verifyScript, /function waitForAuditedImages/);
+  assert.match(verifyScript, /image\.addEventListener\("load"/);
+  assert.match(verifyScript, /Slow network is detected/);
   assert.match(verifyScript, /oldWordPressImages/);
   assert.match(verifyScript, /horizontalOverflow/);
 

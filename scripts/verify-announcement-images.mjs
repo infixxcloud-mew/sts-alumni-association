@@ -95,6 +95,25 @@ async function evaluate(page, expression) {
   return JSON.parse(result.result.value);
 }
 
+async function waitForAuditedImages(page) {
+  await evaluate(
+    page,
+    `JSON.stringify((async () => {
+      const images = [...document.querySelectorAll(".blog-thum img, .legacy-detail-cover img, .saidbar-post img")];
+      await Promise.all(images.map((image) => {
+        if (image.complete) return true;
+        return new Promise((resolve) => {
+          const finish = () => resolve(true);
+          image.addEventListener("load", finish, { once: true });
+          image.addEventListener("error", finish, { once: true });
+          setTimeout(finish, 10000);
+        });
+      }));
+      return true;
+    })())`,
+  );
+}
+
 async function auditRoute(page, route) {
   await page.send("Emulation.setDeviceMetricsOverride", {
     width: 1440,
@@ -107,7 +126,8 @@ async function auditRoute(page, route) {
 
   const firstEvent = page.events.length;
   await page.send("Page.navigate", { url: `${baseUrl}${route}` });
-  await wait(2500);
+  await wait(500);
+  await waitForAuditedImages(page);
 
   const metrics = await evaluate(
     page,
@@ -149,13 +169,16 @@ async function auditRoute(page, route) {
         event.method,
     )
     .filter((message) => !String(message).includes("net::ERR_ABORTED"));
+  const actionableBrowserErrors = browserErrors.filter(
+    (message) => !String(message).includes("Slow network is detected"),
+  );
 
   const fileName = `${runLabel}-${route.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "")}-announcement-images.png`;
   await writeFile(resolve(outputDirectory, fileName), Buffer.from(screenshot.data, "base64"));
 
   return {
     route,
-    browserErrors,
+    browserErrors: actionableBrowserErrors,
     screenshot: resolve(outputDirectory, fileName),
     ...metrics,
   };
