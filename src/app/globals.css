@@ -455,10 +455,6 @@ body {
 }
 
 @media (max-width: 767px) {
-  .legacy-site .legacy-bursary-slide-container {
-    padding-top: 18%;
-  }
-
   .legacy-site .previous-committee-wrapper {
     padding-left: 15px;
     padding-right: 15px;
