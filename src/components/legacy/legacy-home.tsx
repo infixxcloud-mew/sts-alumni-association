@@ -418,8 +418,8 @@ export function LegacyHomePage({
       <section id="slider-part-edu">
         <LegacySlider className="slider-active" kind="hero">
           {[
-            "/legacy-theme/images/digital-learning-center-3-2.jpeg",
-            "/legacy-theme/images/digital-learning-center-3-1.jpeg",
+            "/legacy-theme/images/digital-learning-center-3-2-hq.jpeg",
+            "/legacy-theme/images/digital-learning-center-3-1-hq.jpeg",
             "/legacy-theme/images/digital-learning-center-1-2.jpg",
             "/legacy-theme/images/digital-learning-center-1-1.jpg",
           ].map((image) => (
@@ -602,7 +602,7 @@ export function LegacyHomePage({
                     {image ? (
                       <div className="testimonial-thum">
                         <Image
-                          src={image.thumbSrc || image.fullSrc}
+                          src={image.fullSrc || image.thumbSrc}
                           alt={testimonial.name}
                           width={90}
                           height={120}

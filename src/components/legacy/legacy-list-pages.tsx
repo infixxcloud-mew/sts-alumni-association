@@ -386,7 +386,7 @@ export function LegacyAnnouncementCard({ item }: { item: ContentItem }) {
       <div className="blog-thum">
         <a href={href}>
           {image ? (
-            <img src={item.image?.fullSrc || image} alt={item.title} />
+            <img src={image} alt={item.title} />
           ) : null}
         </a>
       </div>
@@ -438,7 +438,7 @@ export function LegacyAnnouncementListPage({
 
   return (
     <LegacyShell active="announcement">
-      <LegacyPageBanner title="全部通告" crumb="通告" image="/legacy-theme/images/hcom3.jpg" bannerClassName="pt-105 pb-130 bg_cover" positionY="15%" />
+      <LegacyPageBanner title="全部通告" crumb="通告" image="/legacy-theme/images/hcom3-hq.jpg" bannerClassName="pt-105 pb-130 bg_cover" positionY="15%" />
       <section id="blog-page" className="pt-90 pb-120 gray-bg">
         <div className="container">
           <div className="row">
@@ -822,7 +822,7 @@ function LegacyQuotePage() {
       <LegacyPageBanner
         title="关于我们"
         crumb="精辟语录"
-        image="/legacy-theme/images/hcom2.jpg"
+        image="/legacy-theme/images/hcom2-hq.jpg"
         positionY="9%"
       />
       <section className="pt-90 pb-45">
@@ -954,9 +954,9 @@ function LegacyConsultantPage() {
 function LegacyBursaryPage() {
   const aboutImage = imageSource(mediaTitle("IMG-20180629-WA0107"));
   const slides = [
-    "/legacy-theme/images/bursary-lim-support.jpg",
-    "/legacy-theme/images/bursary-spm-award.jpg",
-    "/legacy-theme/images/bursary-tan-ling-moi.jpg",
+    "/legacy-theme/images/bursary-lim-support-hq.jpg",
+    "/legacy-theme/images/bursary-spm-award-hq.jpg",
+    "/legacy-theme/images/bursary-tan-ling-moi-hq.jpg",
   ];
   const reasons = [
     {
@@ -1055,7 +1055,7 @@ function LegacyFeedbackPage() {
       <LegacyPageBanner
         title="网站反馈"
         crumb="网站反馈"
-        image="/legacy-theme/images/feedback.jpg"
+        image="/legacy-theme/images/feedback-hq.jpg"
         bannerClassName="pt-105 pb-130 bg_cover"
       />
       <section id="developer-1" className="pt-70 pb-100 gray-bg">
@@ -1570,7 +1570,7 @@ function LegacyAboutUsPage() {
                     {image ? (
                       <div className="testimonial-thum">
                         <Image
-                          src={image.thumbSrc || image.fullSrc}
+                          src={image.fullSrc || image.thumbSrc}
                           alt={testimonial.name}
                           width={90}
                           height={120}

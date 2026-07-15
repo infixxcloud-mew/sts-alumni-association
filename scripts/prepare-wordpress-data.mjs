@@ -95,10 +95,17 @@ function mediaUrlKey(url) {
   if (!url) return "";
   try {
     const parsed = new URL(url);
-    return decodeURIComponent(parsed.pathname).replace(/-\d+x\d+(?=\.[a-zA-Z0-9]+$)/, "");
+    return normalizeMediaPath(parsed.pathname);
   } catch {
-    return String(url).replace(/-\d+x\d+(?=\.[a-zA-Z0-9]+$)/, "");
+    return normalizeMediaPath(String(url));
   }
+}
+
+function normalizeMediaPath(value) {
+  return decodeURIComponent(value)
+    .replace(/^\/wp-content\/uploads\//, "")
+    .replace(/-\d+x\d+(?=\.[a-zA-Z0-9]+$)/, "")
+    .replace(/-e\d+(?=\.[a-zA-Z0-9]+$)/, "");
 }
 
 function mediaFromUrl(urlToMedia, urlPathToMedia, url) {
@@ -287,9 +294,10 @@ async function main() {
       .map((item) => [item.originalUrl, item]),
   );
   const urlPathToMedia = new Map(
-    processedMedia
-      .filter((item) => item.originalUrl)
-      .map((item) => [mediaUrlKey(item.originalUrl), item]),
+    processedMedia.flatMap((item) => [
+      [mediaUrlKey(item.originalUrl), item],
+      [mediaUrlKey(item.originalUploadPath), item],
+    ]),
   );
 
   const albums = galleryManifest

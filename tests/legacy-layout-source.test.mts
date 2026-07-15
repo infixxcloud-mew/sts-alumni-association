@@ -106,7 +106,7 @@ test("routes public static pages to their original WordPress layouts", async () 
 test("keeps listing pages in the original WordPress card structures", async () => {
   const listPages = await readFile(resolve("src/components/legacy/legacy-list-pages.tsx"), "utf8");
 
-  assert.match(listPages, /<LegacyPageBanner title="全部通告" crumb="通告" image="\/legacy-theme\/images\/hcom3\.jpg" bannerClassName="pt-105 pb-130 bg_cover" positionY="15%" \/>/);
+  assert.match(listPages, /<LegacyPageBanner title="全部通告" crumb="通告" image="\/legacy-theme\/images\/hcom3-hq\.jpg" bannerClassName="pt-105 pb-130 bg_cover" positionY="15%" \/>/);
   assert.match(listPages, /<LegacyPageBanner title="全部回忆" crumb="回忆" image="\/legacy-theme\/images\/memory-banner\.jpg" positionY="83%" \/>/);
   assert.match(listPages, /<LegacyPageBanner title="全部相册" crumb="相册" image="\/legacy-theme\/images\/gallery-banner\.jpg" positionY="15%" \/>/);
   assert.match(listPages, /<section id="courses-part" className="pt-120 pb-120 gray-bg">/);
@@ -122,7 +122,7 @@ test("keeps listing pages in the original WordPress card structures", async () =
   assert.match(listPages, /<div className="saidbar-search mt-30">/);
   assert.match(listPages, /<div className="singel-post">/);
   assert.match(listPages, /const legacyCategoryOrder = \["活动", "奖励金", "周年活动"\]/);
-  assert.match(listPages, /<img src=\{item\.image\?\.fullSrc \|\| image\} alt=\{item\.title\} \/>/);
+  assert.match(listPages, /<img src=\{image\} alt=\{item\.title\} \/>/);
   assert.doesNotMatch(listPages, /width=\{770\}[\s\S]*?height=\{430\}/);
   assert.match(listPages, /justify-content-lg-end justify-content-center/);
   assert.match(listPages, /&laquo; Previous/);
@@ -174,10 +174,62 @@ test("keeps legacy public navigation on plain anchors without Next route transit
 });
 
 test("keeps announcement archives from rendering placeholder image blocks", async () => {
-  const listPages = await readFile(resolve("src/components/legacy/legacy-list-pages.tsx"), "utf8");
+  const [listPages, siteDataSource, prepareScript, verifyScript] = await Promise.all([
+    readFile(resolve("src/components/legacy/legacy-list-pages.tsx"), "utf8"),
+    readFile(resolve("src/lib/site-data.ts"), "utf8"),
+    readFile(resolve("scripts/prepare-wordpress-data.mjs"), "utf8"),
+    readFile(resolve("scripts/verify-announcement-images.mjs"), "utf8"),
+  ]);
 
   assert.doesNotMatch(listPages, /legacy-image-placeholder">\u901a\u544a/);
-  assert.match(listPages, /\{image \? \(\s*<img src=\{item\.image\?\.fullSrc \|\| image\} alt=\{item\.title\} \/>[\s\S]*?\) : null\}/);
+  assert.match(listPages, /\{image \? \(\s*<img src=\{image\} alt=\{item\.title\} \/>[\s\S]*?\) : null\}/);
+  assert.match(siteDataSource, /function mediaFromLegacyUrl/);
+  assert.match(siteDataSource, /legacyStaticImageFallbacks/);
+  assert.match(siteDataSource, /announcement_photo/);
+  assert.match(siteDataSource, /item\.image\?\.fullSrc \|\| item\.image\?\.thumbSrc/);
+  assert.match(prepareScript, /function normalizeMediaPath/);
+  assert.match(prepareScript, /-\\d\+x\\d\+/);
+  assert.match(prepareScript, /-e\\d\+/);
+  assert.match(prepareScript, /mediaUrlKey\(item\.originalUploadPath\)/);
+  assert.match(verifyScript, /process\.env\.VERIFY_BASE_URL/);
+  assert.match(verifyScript, /oldWordPressImages/);
+  assert.match(verifyScript, /horizontalOverflow/);
+
+  for (const asset of [
+    "3-hq.jpg",
+    "2-scaled.jpg",
+    "22789166_2053167941648064_2990332127747441967_n-hq.jpg",
+  ]) {
+    await access(resolve("public/legacy-theme/images/announcements", asset));
+  }
+});
+
+test("uses full-size media outside album photo grids", async () => {
+  const [home, listPages, photoGallery] = await Promise.all([
+    readFile(resolve("src/components/legacy/legacy-home.tsx"), "utf8"),
+    readFile(resolve("src/components/legacy/legacy-list-pages.tsx"), "utf8"),
+    readFile(resolve("src/components/photo-gallery.tsx"), "utf8"),
+  ]);
+
+  assert.match(home, /src=\{image\.fullSrc \|\| image\.thumbSrc\}/);
+  assert.match(home, /digital-learning-center-3-2-hq\.jpeg/);
+  assert.match(home, /digital-learning-center-3-1-hq\.jpeg/);
+  assert.match(listPages, /src=\{image\.fullSrc \|\| image\.thumbSrc\}/);
+  assert.match(listPages, /bursary-lim-support-hq\.jpg/);
+  assert.match(listPages, /bursary-spm-award-hq\.jpg/);
+  assert.match(listPages, /bursary-tan-ling-moi-hq\.jpg/);
+  assert.match(listPages, /const src = photo\.thumbSrc \|\| photo\.fullSrc/);
+  assert.match(photoGallery, /src=\{photo\.thumbSrc \|\| photo\.fullSrc\}/);
+
+  for (const asset of [
+    "digital-learning-center-3-2-hq.jpeg",
+    "digital-learning-center-3-1-hq.jpeg",
+    "bursary-lim-support-hq.jpg",
+    "bursary-spm-award-hq.jpg",
+    "bursary-tan-ling-moi-hq.jpg",
+  ]) {
+    await access(resolve("public/legacy-theme/images", asset));
+  }
 });
 
 test("keeps gallery detail photos centered, captionless, and controlled by the legacy lightbox", async () => {
@@ -211,7 +263,7 @@ test("keeps the about dropdown child pages on their legacy custom templates", as
   assert.match(listPages, /function LegacyBursaryPage/);
   assert.match(listPages, /function LegacyFeedbackPage/);
 
-  assert.match(listPages, /image="\/legacy-theme\/images\/hcom2\.jpg"/);
+  assert.match(listPages, /image="\/legacy-theme\/images\/hcom2-hq\.jpg"/);
   assert.match(listPages, /拿督斯里范长锡国会议员/);
   assert.match(listPages, /能获得大家的邀请来说几句话/);
 
@@ -225,7 +277,7 @@ test("keeps the about dropdown child pages on their legacy custom templates", as
   assert.match(listPages, /共筑梦想 扶助未来/);
   assert.match(listPages, /教育是改变命运的关键/);
 
-  assert.match(listPages, /image="\/legacy-theme\/images\/feedback\.jpg"/);
+  assert.match(listPages, /image="\/legacy-theme\/images\/feedback-hq\.jpg"/);
   assert.match(listPages, /开发团队感言/);
   assert.match(listPages, /lausiexiong99366@gmail\.com/);
   assert.match(listPages, /\+60146992502/);
@@ -234,9 +286,9 @@ test("keeps the about dropdown child pages on their legacy custom templates", as
   assert.match(stylesheet, /\.legacy-site \.web-feedback-contact/);
 
   for (const asset of [
-    "hcom2.jpg",
+    "hcom2-hq.jpg",
     "previous-committee-banner.jpg",
-    "feedback.jpg",
+    "feedback-hq.jpg",
   ]) {
     await access(resolve("public/legacy-theme/images", asset));
   }
