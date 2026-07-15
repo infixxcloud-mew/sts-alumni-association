@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import test from "node:test";
 
@@ -194,4 +194,50 @@ test("keeps gallery detail photos centered, captionless, and controlled by the l
   assert.match(interactionLayer, /legacy-lightbox-next/);
   assert.match(interactionLayer, /legacy-lightbox-zoom-in/);
   assert.match(interactionLayer, /legacy-lightbox-zoom-out/);
+});
+
+test("keeps the about dropdown child pages on their legacy custom templates", async () => {
+  const [listPages, stylesheet] = await Promise.all([
+    readFile(resolve("src/components/legacy/legacy-list-pages.tsx"), "utf8"),
+    readFile(resolve("src/app/globals.css"), "utf8"),
+  ]);
+
+  for (const slug of ["quote", "consultant", "bursary", "feedback"]) {
+    assert.match(listPages, new RegExp(`page\\.slug === "${slug}"`));
+  }
+
+  assert.match(listPages, /function LegacyQuotePage/);
+  assert.match(listPages, /function LegacyConsultantPage/);
+  assert.match(listPages, /function LegacyBursaryPage/);
+  assert.match(listPages, /function LegacyFeedbackPage/);
+
+  assert.match(listPages, /image="\/legacy-theme\/images\/hcom2\.jpg"/);
+  assert.match(listPages, /拿督斯里范长锡国会议员/);
+  assert.match(listPages, /能获得大家的邀请来说几句话/);
+
+  assert.match(listPages, /image="\/legacy-theme\/images\/previous-committee-banner\.jpg"/);
+  assert.match(listPages, /previous-committee-wrapper/);
+  assert.match(listPages, /联邦天然资源,环境永续部副部长,泗里街国会议员兼卢勃区立法议员拿督斯里范长锡/);
+  assert.match(listPages, /谢祯兴/);
+
+  assert.match(listPages, /id="bursary-banner"/);
+  assert.match(listPages, /id="bursary-about"/);
+  assert.match(listPages, /共筑梦想 扶助未来/);
+  assert.match(listPages, /教育是改变命运的关键/);
+
+  assert.match(listPages, /image="\/legacy-theme\/images\/feedback\.jpg"/);
+  assert.match(listPages, /开发团队感言/);
+  assert.match(listPages, /lausiexiong99366@gmail\.com/);
+  assert.match(listPages, /\+60146992502/);
+
+  assert.match(stylesheet, /\.legacy-site \.previous-committee-wrapper/);
+  assert.match(stylesheet, /\.legacy-site \.web-feedback-contact/);
+
+  for (const asset of [
+    "hcom2.jpg",
+    "previous-committee-banner.jpg",
+    "feedback.jpg",
+  ]) {
+    await access(resolve("public/legacy-theme/images", asset));
+  }
 });

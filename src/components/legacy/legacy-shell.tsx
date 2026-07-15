@@ -69,12 +69,14 @@ export function LegacyPageBanner({
   crumb,
   image = "/legacy-theme/images/about-banner.JPG",
   bannerClassName = "pt-105 pb-110 bg_cover",
+  parentCrumb,
   positionY = "63%",
 }: {
   title: string;
   crumb: string;
   image?: string;
   bannerClassName?: string;
+  parentCrumb?: string;
   positionY?: string;
 }) {
   return (
@@ -97,6 +99,11 @@ export function LegacyPageBanner({
                   <li className="breadcrumb-item">
                     <a href="/">主页</a>
                   </li>
+                  {parentCrumb ? (
+                    <li className="breadcrumb-item">
+                      <a>{parentCrumb}</a>
+                    </li>
+                  ) : null}
                   <li className="breadcrumb-item active" aria-current="page">
                     {crumb}
                   </li>

@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
+import { LegacyBackgroundSlide } from "@/components/legacy/legacy-background-slide";
 import { getPaginationWindow } from "@/components/legacy/legacy-interactions";
 import { LegacyCounter } from "@/components/legacy/legacy-counter";
 import { LegacySlider } from "@/components/legacy/legacy-slider";
@@ -722,6 +723,22 @@ export function LegacyGenericPage({ page }: { page: ContentItem }) {
     return <LegacyAboutUsPage />;
   }
 
+  if (page.slug === "quote") {
+    return <LegacyQuotePage />;
+  }
+
+  if (page.slug === "consultant") {
+    return <LegacyConsultantPage />;
+  }
+
+  if (page.slug === "bursary") {
+    return <LegacyBursaryPage />;
+  }
+
+  if (page.slug === "feedback") {
+    return <LegacyFeedbackPage />;
+  }
+
   if (page.slug === "sponsor") {
     return <LegacySponsorPage />;
   }
@@ -788,6 +805,344 @@ export function LegacyGenericPage({ page }: { page: ContentItem }) {
                     dangerouslySetInnerHTML={{ __html: page.contentHtml }}
                   />
                 ) : null}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </LegacyShell>
+  );
+}
+
+function LegacyQuotePage() {
+  const portrait = imageSource(mediaTitle("YB"));
+
+  return (
+    <LegacyShell active="about">
+      <LegacyPageBanner
+        title="关于我们"
+        crumb="精辟语录"
+        image="/legacy-theme/images/hcom2.jpg"
+        positionY="9%"
+      />
+      <section className="pt-90 pb-45">
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-lg-4 col-md-8">
+              <div className="teachers-left mt-0">
+                <div className="hero">
+                  {portrait ? <img src={portrait} alt="拿督斯里范长锡" /> : null}
+                </div>
+                <div className="name quote-name">
+                  <h6>拿督斯里范长锡国会议员</h6>
+                  <span>华侨校友</span>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-8">
+              <div className="teachers-right mt-0">
+                <div className="tab-content" id="myTabContent">
+                  <div
+                    className="tab-pane fade show active"
+                    id="dashboard"
+                    role="tabpanel"
+                    aria-labelledby="dashboard-tab"
+                  >
+                    <div className="dashboard-cont">
+                      <div className="singel-dashboard web-feedback-contact pt-40">
+                        <h4 className="mb-20">献词</h4>
+                        <p>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;能获得大家的邀请来说几句话，我满怀感恩。如果没有当年母校的栽培，就没有今天更好的自己，母校的恩情我心心念念。这让我时刻谨记要努力不懈为别人付出更多，要竭尽全力为大家创造更好的生活条件，营造一个更好的生活环境。感恩是通向幸福最好的钥匙，知道这是最正确的途径，我诚心邀请更多的校友结伴同行，大家一起来建设母校，让更多的莘莘学子也有机会如同我们般在母校的培育之下，茁壮成长。
+                          <br />
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;今天的世界转变太大也太快，科技如人工智能的革新给人类生活的方方面面带来了巨大的冲击，教育更是首当其冲。今天的学校已经无法只是发挥传统的为学生“传道授业解惑”的功能，它必须对外部瞬息万变的世界做出回应，观念的革新及制度的创新尤为关键。办教育已经不再仅仅是在学校服务的教育工作者个人的事，教育影响幅度的大小和社会不同集体参与程度的高低息息相关。对学校的认知应该从传统的在校园内的“小”学校的概念扩大至包含周遭整个大环境的“大”学校的概念。
+                          <br />
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有鉴于此，我恳切希望母校在大家的群策群力之下，教育的功能能发挥到最极致。教育乃立国之本，学校办好了，学生身心灵都能全面发展了，那就是我们爱家爱国最好的证明了。
+                          <br />
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </LegacyShell>
+  );
+}
+
+function LegacyConsultantPage() {
+  const consultants = [
+    ["联邦天然资源,环境永续部副部长,泗里街国会议员兼卢勃区立法议员拿督斯里范长锡", "永久名誉顾问"],
+    ["拿督IR夏忠泰", "永久名誉顾问"],
+    ["邱祥熙", "永久名誉主席"],
+    ["汪景忠", "永久名誉主席"],
+    ["詹庆将", "永久名誉主席"],
+    ["杨世贤", "华侨校友总召集人"],
+    ["拿督陈冠勋州立法议员", "顾问"],
+    ["拿督张公贤", "顾问"],
+    ["翁娆琴", "顾问"],
+    ["刘会建", "顾问"],
+    ["王焕义", "顾问"],
+    ["黄拔鹏", "顾问"],
+    ["詹亲傧", "顾问"],
+    ["詹胜运", "顾问"],
+    ["郭和来", "顾问"],
+    ["陈泰富", "顾问"],
+    ["刘世仁", "顾问"],
+    ["林万权", "顾问"],
+    ["夏忠良", "顾问"],
+    ["黄良明", "顾问"],
+    ["黄华强", "顾问"],
+    ["黄灵花", "顾问"],
+    ["詹利运", "顾问"],
+    ["李忠平", "顾问"],
+    ["吴绍义", "顾问"],
+    ["林和桂", "顾问"],
+    ["陈新合", "顾问"],
+    ["张昌存", "顾问"],
+    ["刘贤蒙", "顾问"],
+    ["黄灵彪", "顾问"],
+    ["陈耀钦", "顾问"],
+    ["范友江", "顾问"],
+    ["张济盟", "顾问"],
+    ["范菖躘", "顾问"],
+    ["郑玉祥", "顾问"],
+    ["黄守光", "顾问"],
+    ["陈鹏祯", "顾问"],
+    ["严云飞", "顾问"],
+    ["黄圣安", "顾问"],
+    ["张公庆", "顾问"],
+    ["锺珍和", "顾问"],
+    ["詹淑文", "顾问"],
+    ["郑其昌", "顾问"],
+    ["黄政声", "顾问"],
+    ["黄灵冠", "顾问"],
+    ["詹端朝", "顾问"],
+    ["杨尚存", "顾问"],
+    ["陈守隆", "顾问"],
+    ["陈新同", "顾问"],
+    ["谢祯兴", "顾问"],
+  ];
+
+  return (
+    <LegacyShell active="about">
+      <LegacyPageBanner
+        title="泗里街高级(华侨)中学校友会顾问团"
+        crumb="顾问团"
+        parentCrumb="关于我们"
+        image="/legacy-theme/images/previous-committee-banner.jpg"
+      />
+      <section className="pb-120 gray-bg">
+        <div className="pt-45 previous-committee-wrapper">
+          <h2 style={{ textAlign: "center" }}>泗里街高级(华侨)中学校友会顾问团名单</h2>
+          <ol style={{ margin: "30px" }}>
+            {consultants.map(([name, role]) => (
+              <li key={`${name}-${role}`}>
+                <span>{name}</span>
+                <span>{role}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+    </LegacyShell>
+  );
+}
+
+function LegacyBursaryPage() {
+  const aboutImage = imageSource(mediaTitle("IMG-20180629-WA0107"));
+  const slides = [
+    "/legacy-theme/images/bursary-lim-support.jpg",
+    "/legacy-theme/images/bursary-spm-award.jpg",
+    "/legacy-theme/images/bursary-tan-ling-moi.jpg",
+  ];
+  const reasons = [
+    {
+      number: "01",
+      title: "教育是改变命运的关键",
+      text: "教育是打破贫困、改变命运的重要途径。您的支持将为有需要的学生提供接受优质教育的机会，帮助他们走出困境，实现自我。",
+    },
+    {
+      number: "02",
+      title: "回馈社群",
+      text: "您的捐赠将成为支持社群发展的重要力量。通过您的慷慨捐赠，我们能够建立一个更加团结、充满活力的校友社群，共同为社会做出积极贡献。",
+    },
+    {
+      number: "03",
+      title: "捐赠与赞助",
+      text: "我们诚挚邀请校友、家长和社会各界的慷慨捐赠和赞助，共同支持助学金计划。您的捐赠将直接帮助更多有需要的学生获得教育机会，为他们的未来铺平道路。",
+    },
+  ];
+
+  return (
+    <LegacyShell active="about">
+      <section id="bursary-banner">
+        <LegacySlider className="slider-active" kind="hero">
+          {slides.map((image) => (
+            <LegacyBackgroundSlide image={image} key={image}>
+              <div className="container legacy-bursary-slide-container">
+                <div className="row">
+                  <div className="col-md-12">
+                    <div className="slider-cont">
+                      <h1 style={{ textAlign: "center" }} data-animation="bounceInLeft" data-delay="1s">
+                        校友会助学金计划
+                      </h1>
+                      <ul style={{ textAlign: "center" }}>
+                        <li>
+                          <a
+                            data-animation="fadeInUp"
+                            data-delay="1.6s"
+                            className="main-btn"
+                            href="#bursary-about"
+                          >
+                            了解更多
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </LegacyBackgroundSlide>
+          ))}
+        </LegacySlider>
+      </section>
+      <section id="bursary-about" className="pt-70 pb-110">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-6">
+              <div className="section-title mt-50">
+                <h5>助学金计划</h5>
+                <h2>共筑梦想 扶助未来</h2>
+              </div>
+              <div className="about-cont">
+                <p>
+                  欢迎来到泗里街高级(华侨)中学助学金计划！我们的助学金计划旨在为有需要的学生提供经济援助，帮助他们实现教育梦想。通过这个计划，我们希望能够支持更多学生克服经济障碍，接受优质的教育，成为未来的领导者和贡献者。
+                  我们的使命是通过提供财政援助和资源支持，促进教育机会的平等和普及。我们相信每个人都有权接受教育，无论其经济背景如何。助学金计划是我们为实现这一目标所采取的重要举措之一。通过您的支持和参与，我们能够为更多有才华的学生提供机会，让他们展现潜能，实现自我。
+                </p>
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="about-image mt-50">
+                {aboutImage ? <img src={aboutImage} alt="" /> : null}
+              </div>
+            </div>
+          </div>
+          <div className="about-items pt-60">
+            <div className="row justify-content-center">
+              {reasons.map((reason) => (
+                <div className="col-lg-4 col-md-6 col-sm-10" key={reason.number}>
+                  <div className="about-singel-items mt-30">
+                    <span>{reason.number}</span>
+                    <h4>{reason.title}</h4>
+                    <p>{reason.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    </LegacyShell>
+  );
+}
+
+function LegacyFeedbackPage() {
+  return (
+    <LegacyShell active="about">
+      <LegacyPageBanner
+        title="网站反馈"
+        crumb="网站反馈"
+        image="/legacy-theme/images/feedback.jpg"
+        bannerClassName="pt-105 pb-130 bg_cover"
+      />
+      <section id="developer-1" className="pt-70 pb-100 gray-bg">
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-lg-9">
+              <div className="teachers-right mt-50">
+                <div className="tab-content" id="myTabContent">
+                  <div
+                    className="tab-pane fade show active"
+                    id="dashboard"
+                    role="tabpanel"
+                    aria-labelledby="dashboard-tab"
+                  >
+                    <div className="dashboard-cont">
+                      <div className="singel-dashboard web-feedback-contact pt-40">
+                        <h4 className="mb-20">开发团队感言</h4>
+                        <p>尊敬的校友和访客们，</p>
+                        <br />
+                        <p>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，我们网站开发团队要由衷地感谢泗里街高级(华侨)中学校友会，给予我们这个宝贵的机会来为校友们贡献一点点我们的技能和能力。这个项目对我们来说不仅是一项任务，更是一份崇高的使命，一个让我们能够回馈母校的机会。因此，我们深感荣幸能够参与并建立这个网站，为校友们提供一个专属的平台，以凝聚我们校友的力量，传播和延续学校的精神和传统。
+                        </p>
+                        <br />
+                        <p>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们的愿景一直是建立一个专属于泗里街高级(华侨)中学所有校友们聚集的平台。这个平台的目标是将散落在世界各地的校友们聚集在一起，共同传承学校的精神，汇聚校友的智慧、经验和情感，创造一个具有凝聚力的校友社群。我们想要打造一个让校友们可以更紧密联系、分享故事、建立新的友谊、回顾过去和展望未来的场所。这个平台不仅是一个交流的空间，更是我们共同的文化遗产，一个纪念我们母校的殿堂。
+                        </p>
+                        <br />
+                        <p>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;今天，我们非常自豪地展示这个网站，但我们也知道这只是一个开始。我们承诺，在未来，我们将不断努力改进这个网站，增加更多功能，以满足校友们的需求和期望。我们将持续优化用户体验，确保您能够轻松浏览、参与和与校友互动。我们将努力让这个网站成为一个真正有意义的空间，一个可以汇聚校友智慧和情感的场所。确保这个平台能够充分发挥其潜力，成为所有校友的珍贵资源。
+                        </p>
+                        <br />
+                        <p>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;感谢您的支持和信任。让我们一起继续努力，共同塑造一个充满活力和团结的校友社区！
+                        </p>
+                        <br />
+                        <p>衷心感谢。</p>
+                        <br />
+                        <h4 className="mb-20">联系我们</h4>
+                        <p>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当您探索我们的网站或有任何建议、意见或疑问需要与我们交流时，我们的专业网站开发团队将随时为您提供热忱的帮助和周到的支持。无论您身处何处，都可以通过以下多种方式与我们联系，以确保您的需求得到满足并得到及时解答，
+                        </p>
+                        <br />
+                        <p>电子邮件：</p>
+                        <div className="row">
+                          <div className="col-md-6">
+                            <p>
+                              技术支持：
+                              <a href="mailto:lausiexiong0916@gmail.com"> lausiexiong99366@gmail.com</a>
+                            </p>
+                          </div>
+                          <div className="col-md-6">
+                            <p>
+                              意见反馈：
+                              <a href="mailto:lausiexiong0916@gmail.com"> annielau002@gmail.com</a>
+                            </p>
+                            <br />
+                          </div>
+                        </div>
+                        <p>手机号码：</p>
+                        <div className="row">
+                          <div className="col-md-6">
+                            <p>
+                              刘世雄: <a href="tel:+60128453318"> +60128453318</a>
+                            </p>
+                          </div>
+                          <div className="col-md-6">
+                            <p>
+                              刘兆芳: <a href="tel:+60128996160"> +60128996160</a>
+                            </p>
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-md-6">
+                            <p>
+                              刘钊希: <a href="tel:+60168545205"> +60168545205</a>
+                            </p>
+                          </div>
+                          <div className="col-md-6">
+                            <p>
+                              刘钊辰: <a href="tel:+60146992502"> +60146992502</a>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

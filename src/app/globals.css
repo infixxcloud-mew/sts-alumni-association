@@ -435,6 +435,43 @@ body {
   margin-top: 0;
 }
 
+.legacy-site #bursary-banner,
+.legacy-site .previous-committee-wrapper,
+.legacy-site .web-feedback-contact {
+  max-width: 100%;
+}
+
+.legacy-site .legacy-bursary-slide-container {
+  padding-top: 9%;
+}
+
+.legacy-site .previous-committee-wrapper ol {
+  overflow-wrap: anywhere;
+}
+
+.legacy-site .teachers-right .tab-content,
+.legacy-site .web-feedback-contact {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 767px) {
+  .legacy-site .legacy-bursary-slide-container {
+    padding-top: 18%;
+  }
+
+  .legacy-site .previous-committee-wrapper {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .legacy-site .previous-committee-wrapper ol {
+    column-rule: 0;
+    columns: 1;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
 .legacy-site .legacy-lightbox {
   align-items: center;
   background: rgba(0, 0, 0, 0.8);
