@@ -76,6 +76,17 @@ export const publishedAlbums = siteData.albums.filter(
   (album) => album.photos.length > 0,
 );
 
+export function filterAlbumsByYear(albums: Album[], year: string) {
+  const normalizedYear = year.trim().toLocaleLowerCase();
+  if (!normalizedYear) return albums;
+
+  return albums.filter((album) =>
+    [album.eventYear, album.eventDate].some((value) =>
+      value.toLocaleLowerCase().includes(normalizedYear),
+    ),
+  );
+}
+
 export function getAlbumBySlug(slug: string) {
   const decoded = decodeURIComponent(slug);
   return siteData.albums.find((album) => album.slug === decoded);

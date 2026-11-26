@@ -303,7 +303,7 @@ body {
 }
 
 .legacy-site .singel-course .cont .legacy-album-date {
-  color: #ffc600;
+  color: #8a8a8a;
   display: block;
   margin-bottom: 8px;
 }
@@ -321,6 +321,104 @@ body {
 .legacy-site .legacy-announcement-meta .legacy-meta-category,
 .legacy-site .legacy-announcement-accent {
   color: #ffc600 !important;
+}
+
+.legacy-site #about-part .section-title h5,
+.legacy-site #about-part .section-title h2,
+.legacy-site #about-part .about-event .event-title h3,
+.legacy-site #about-part .about-event .singel-event a h4,
+.legacy-site #about-part .about-event .singel-event a:hover h4 {
+  color: #000;
+}
+
+.legacy-site #about-part .about-cont p,
+.legacy-site #about-part .about-event .singel-event > span {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.legacy-site .legacy-album-cover {
+  height: 255px;
+}
+
+.legacy-site .legacy-album-cover > a {
+  display: block;
+  height: 100%;
+}
+
+.legacy-site .legacy-album-cover img {
+  display: block;
+  height: 255px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.legacy-site .legacy-album-cover .legacy-image-placeholder {
+  height: 255px;
+  min-height: 0;
+}
+
+.legacy-site .legacy-photo {
+  height: 210px;
+}
+
+.legacy-site .legacy-photo img {
+  height: 100%;
+}
+
+.legacy-site .legacy-album-intro {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 850px;
+  text-align: center;
+}
+
+.legacy-site .legacy-album-detail-cover {
+  aspect-ratio: 850 / 560;
+  background: #edf0f2;
+  display: flex;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 850px;
+  overflow: hidden;
+}
+
+.legacy-site .legacy-detail-cover.legacy-album-detail-cover img {
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.legacy-site .legacy-album-intro .course-category h6 {
+  color: #8a8a8a;
+}
+
+.legacy-site .legacy-album-intro .legacy-album-description {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 720px;
+}
+
+.legacy-site .legacy-memory-page .event-cont > span,
+.legacy-site .legacy-memory-page .saidbar-post ul li a span,
+.legacy-site .legacy-memory-page .saidbar .categories ul li span,
+.legacy-site .legacy-memory-page .blog-details .cont > ul li {
+  color: #8a8a8a !important;
+}
+
+.legacy-site .singel-testimonial .testimonial-thum {
+  height: 120px;
+  top: 0;
+  transform: none;
+  width: 90px;
+}
+
+.legacy-site .singel-testimonial .testimonial-thum img {
+  display: block;
+  height: 120px;
+  object-fit: cover;
+  width: 90px;
 }
 
 .legacy-site .saidbar .categories ul li a {
@@ -372,7 +470,24 @@ body {
   }
 
   .legacy-site .about-bg {
-    display: none;
+    bottom: 0;
+    display: block;
+    height: 100%;
+    opacity: 0.7;
+    top: 0;
+    z-index: 0;
+  }
+
+  .legacy-site #about-part .container > .row {
+    position: relative;
+    z-index: 1;
+  }
+
+  .legacy-site .about-bg img {
+    height: 100%;
+    object-fit: cover;
+    object-position: center bottom;
+    width: 100%;
   }
 
   .legacy-site .course-btn {

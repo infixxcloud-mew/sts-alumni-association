@@ -137,7 +137,7 @@ export function LegacyAlbumCard({ album }: { album: Album }) {
   return (
     <div className="singel-course mt-30">
       <div className="thum">
-        <div className="image">
+        <div className="image legacy-album-cover">
           <a href={href}>
             {album.coverSrc ? (
               <Image
@@ -169,7 +169,15 @@ export function LegacyAlbumCard({ album }: { album: Album }) {
   );
 }
 
-export function LegacyGalleryListPage({ albums, page = 1 }: { albums: Album[]; page?: number }) {
+export function LegacyGalleryListPage({
+  albums,
+  page = 1,
+  year = "",
+}: {
+  albums: Album[];
+  page?: number;
+  year?: string;
+}) {
   const pagination = getPaginationWindow(albums.length, 6, page);
   const visibleAlbums = albums.slice(pagination.start, pagination.end);
 
@@ -202,7 +210,12 @@ export function LegacyGalleryListPage({ albums, page = 1 }: { albums: Album[]; p
 
                 <div className="courses-search float-right">
                   <form action="/gallery" method="GET">
-                    <input type="text" name="year_sts" placeholder="按年份搜索 | 例子:2023" />
+                    <input
+                      type="text"
+                      name="year_sts"
+                      defaultValue={year}
+                      placeholder="按年份搜索 | 例子:2023"
+                    />
                     <button type="submit">
                       <i className="fa fa-search" aria-hidden="true" />
                     </button>
@@ -219,6 +232,11 @@ export function LegacyGalleryListPage({ albums, page = 1 }: { albums: Album[]; p
                     <LegacyAlbumCard album={album} />
                   </div>
                 ))}
+                {visibleAlbums.length === 0 ? (
+                  <div className="col-12 mt-30 text-center">
+                    <p>没有找到{year ? ` ${year} 年` : ""}的相册。</p>
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>
@@ -228,6 +246,7 @@ export function LegacyGalleryListPage({ albums, page = 1 }: { albums: Album[]; p
                 basePath="/gallery"
                 currentPage={pagination.currentPage}
                 pageCount={pagination.pageCount}
+                query={year ? new URLSearchParams({ year_sts: year }).toString() : ""}
               />
             </div>
           </div>
@@ -246,10 +265,10 @@ export function LegacyAlbumDetailPage({ album }: { album: Album }) {
       <section id="corses-singel" className="pt-90 pb-120 gray-bg">
         <div className="container">
           <div className="row">
-            <div className="col-lg-8">
-              <div className="corses-singel-left mt-30">
+            <div className="col-lg-12">
+              <div className="corses-singel-left legacy-album-intro mt-30">
                 {cover ? (
-                  <div className="legacy-detail-cover">
+                  <div className="legacy-detail-cover legacy-album-detail-cover">
                     <Image
                       src={cover}
                       alt={album.title}
@@ -276,7 +295,7 @@ export function LegacyAlbumDetailPage({ album }: { album: Album }) {
                   </ul>
                 </div>
 
-                {album.description ? <p>{album.description}</p> : null}
+                {album.description ? <p className="legacy-album-description">{album.description}</p> : null}
               </div>
             </div>
           </div>
@@ -356,7 +375,7 @@ export function LegacyMemoryListPage({ memories, page = 1 }: { memories: Content
   return (
     <LegacyShell active="memory">
       <LegacyPageBanner title="全部回忆" crumb="回忆" image="/legacy-theme/images/memory-banner.jpg" positionY="83%" />
-      <section id="event-page" className="pt-90 pb-120 gray-bg">
+      <section id="event-page" className="legacy-memory-page pt-90 pb-120 gray-bg">
         <div className="container">
           <div className="row">
             {visibleMemories.map((item) => (
@@ -661,7 +680,10 @@ export function LegacyContentDetailPage({
   return (
     <LegacyShell active={active}>
       <LegacyPageBanner title={item.title} crumb={crumb} />
-      <section id="blog-singel" className="pt-90 pb-120 gray-bg">
+      <section
+        id="blog-singel"
+        className={`${active === "memory" ? "legacy-memory-page " : ""}pt-90 pb-120 gray-bg`}
+      >
         <div className="container">
           <div className="row">
             <div className="col-lg-8">
