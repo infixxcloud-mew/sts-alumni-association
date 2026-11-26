@@ -5,6 +5,7 @@ import { getPaginationWindow } from "@/components/legacy/legacy-interactions";
 import { LegacyCounter } from "@/components/legacy/legacy-counter";
 import { LegacySlider } from "@/components/legacy/legacy-slider";
 import { LegacyPageBanner, LegacySectionTitle, LegacyShell } from "@/components/legacy/legacy-shell";
+import { featuredAnnouncements } from "@/lib/announcement-filter";
 import type { Album, ContentItem, MediaItem } from "@/lib/site-data";
 import { displayDate, itemImage, siteData } from "@/lib/site-data";
 import { staticPageContent } from "@/lib/static-pages";
@@ -25,7 +26,7 @@ function imageSource(media: MediaItem | null | undefined) {
   return media?.fullSrc || media?.thumbSrc || "";
 }
 
-function iconText(icon: string, text: string | number | undefined) {
+function iconText(icon: string, text: string | number | boolean | undefined) {
   if (!text) return null;
 
   return (
@@ -67,11 +68,13 @@ function LegacyPagination({
   basePath,
   currentPage,
   pageCount,
+  query = "",
   alignmentClassName = "justify-content-center",
 }: {
   basePath: string;
   currentPage: number;
   pageCount: number;
+  query?: string;
   alignmentClassName?: string;
 }) {
   if (pageCount <= 1) return null;
@@ -86,7 +89,7 @@ function LegacyPagination({
           : [1, "dots", currentPage - 1, currentPage, currentPage + 1, "dots-end", pageCount];
 
   function href(page: number) {
-    return `${basePath}/page/${page}`;
+    return `${basePath}/page/${page}${query ? `?${query}` : ""}`;
   }
 
   return (
@@ -154,8 +157,8 @@ export function LegacyAlbumCard({ album }: { album: Album }) {
         </div>
       </div>
       <div className="cont">
-        {album.eventDate ? <span>{album.eventDate}</span> : null}
-        <a href={href}>
+        {album.eventDate ? <span className="legacy-album-date">{album.eventDate}</span> : null}
+        <a className="legacy-album-title" href={href}>
           <h4>{album.title}</h4>
         </a>
         {album.description ? (
@@ -394,10 +397,10 @@ export function LegacyAnnouncementCard({ item }: { item: ContentItem }) {
         <a href={href}>
           <h3>{item.title}</h3>
         </a>
-        <ul>
+        <ul className="legacy-announcement-meta">
           {displayDate(item) ? (
             <li>
-              <a href="javascript:;">
+              <a className="legacy-meta-date" href="javascript:;">
                 <i className="fa fa-calendar" aria-hidden="true" />
                 {displayDate(item)}
               </a>
@@ -413,7 +416,7 @@ export function LegacyAnnouncementCard({ item }: { item: ContentItem }) {
           ) : null}
           {item.fields.category ? (
             <li>
-              <a href="javascript:;">
+              <a className="legacy-meta-category" href="javascript:;">
                 <i className="fa fa-tags" aria-hidden="true" />
                 {String(item.fields.category)}
               </a>
@@ -428,10 +431,16 @@ export function LegacyAnnouncementCard({ item }: { item: ContentItem }) {
 
 export function LegacyAnnouncementListPage({
   announcements,
+  allAnnouncements = announcements,
   page = 1,
+  category = "",
+  keyword = "",
 }: {
   announcements: ContentItem[];
+  allAnnouncements?: ContentItem[];
   page?: number;
+  category?: string;
+  keyword?: string;
 }) {
   const pagination = getPaginationWindow(announcements.length, 2, page);
   const visibleAnnouncements = announcements.slice(pagination.start, pagination.end);
@@ -450,11 +459,20 @@ export function LegacyAnnouncementListPage({
                 basePath="/announcement"
                 currentPage={pagination.currentPage}
                 pageCount={pagination.pageCount}
+                query={new URLSearchParams([
+                  ...(category ? [["cat_", category] as [string, string]] : []),
+                  ...(keyword ? [["keyword_search", keyword] as [string, string]] : []),
+                ]).toString()}
                 alignmentClassName="justify-content-lg-end justify-content-center"
               />
             </div>
             <div className="col-lg-4">
-              <LegacyAnnouncementSidebar items={announcements} />
+              <LegacyAnnouncementSidebar
+                items={allAnnouncements}
+                featuredItems={featuredAnnouncements(allAnnouncements)}
+                category={category}
+                keyword={keyword}
+              />
             </div>
           </div>
         </div>
@@ -463,7 +481,17 @@ export function LegacyAnnouncementListPage({
   );
 }
 
-function LegacyAnnouncementSidebar({ items }: { items: ContentItem[] }) {
+function LegacyAnnouncementSidebar({
+  items,
+  featuredItems,
+  category: selectedCategory,
+  keyword,
+}: {
+  items: ContentItem[];
+  featuredItems: ContentItem[];
+  category: string;
+  keyword: string;
+}) {
   const categorySet = new Set(items.map((item) => String(item.fields.category || "")).filter(Boolean));
   const legacyCategoryOrder = ["活动", "奖励金", "周年活动"];
   const categories = [
@@ -477,7 +505,8 @@ function LegacyAnnouncementSidebar({ items }: { items: ContentItem[] }) {
         <div className="col-lg-12 col-md-6">
           <div className="saidbar-search mt-30">
             <form action="/announcement" method="GET">
-              <input type="text" name="keyword_search" placeholder="关键词搜索" />
+              {selectedCategory ? <input type="hidden" name="cat_" value={selectedCategory} /> : null}
+              <input type="text" name="keyword_search" defaultValue={keyword} placeholder="关键词搜索" />
               <button type="submit">
                 <i className="fa fa-search" aria-hidden="true" />
               </button>
@@ -486,9 +515,22 @@ function LegacyAnnouncementSidebar({ items }: { items: ContentItem[] }) {
           <div className="categories mt-30">
             <h4>类别分类</h4>
             <ul>
+              <li>
+                <a className={!selectedCategory ? "is-active" : undefined} href={keyword ? `/announcement?keyword_search=${encodeURIComponent(keyword)}` : "/announcement"}>
+                  全部类别
+                </a>
+              </li>
               {categories.map((category) => (
                 <li key={category}>
-                  <a href={`/announcement?cat_=${encodeURIComponent(category)}`}>{category}</a>
+                  <a
+                    className={category === selectedCategory ? "is-active" : undefined}
+                    href={`/announcement?${new URLSearchParams([
+                      ["cat_", category],
+                      ...(keyword ? [["keyword_search", keyword] as [string, string]] : []),
+                    ]).toString()}`}
+                  >
+                    {category}
+                  </a>
                 </li>
               ))}
             </ul>
@@ -499,7 +541,7 @@ function LegacyAnnouncementSidebar({ items }: { items: ContentItem[] }) {
           <div className="saidbar-post mt-30">
             <h4>重点更新</h4>
             <ul>
-              {items.slice(0, 3).map((item) => {
+              {featuredItems.map((item) => {
                 const image = itemImage(item);
 
                 return (
@@ -511,7 +553,7 @@ function LegacyAnnouncementSidebar({ items }: { items: ContentItem[] }) {
                         </div>
                         <div className="cont">
                           <h6>{item.title}</h6>
-                          {displayDate(item) ? <span>{displayDate(item)}</span> : null}
+                          {displayDate(item) ? <span className="legacy-announcement-accent">{displayDate(item)}</span> : null}
                         </div>
                       </div>
                     </a>
@@ -529,16 +571,20 @@ function LegacyAnnouncementSidebar({ items }: { items: ContentItem[] }) {
 function LegacySidebar({
   title,
   items,
+  categoryItems = items,
   basePath,
   categoryTitle = "类别分类",
+  highlightAnnouncementMeta = false,
 }: {
   title: string;
   items: ContentItem[];
+  categoryItems?: ContentItem[];
   basePath: string;
   categoryTitle?: string;
+  highlightAnnouncementMeta?: boolean;
 }) {
   const categories = Array.from(
-    new Set(items.map((item) => String(item.fields.category || "")).filter(Boolean)),
+    new Set(categoryItems.map((item) => String(item.fields.category || "")).filter(Boolean)),
   );
 
   return (
@@ -551,7 +597,9 @@ function LegacySidebar({
               <ul>
                 {categories.map((category) => (
                   <li key={category}>
-                    <span>{category}</span>
+                    <span className={highlightAnnouncementMeta ? "legacy-announcement-accent" : undefined}>
+                      {category}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -567,7 +615,11 @@ function LegacySidebar({
                 <li key={item.id}>
                   <a href={contentPath(basePath, item)}>
                     <h6>{item.title}</h6>
-                    {displayDate(item) ? <span>{displayDate(item)}</span> : null}
+                    {displayDate(item) ? (
+                      <span className={highlightAnnouncementMeta ? "legacy-announcement-accent" : undefined}>
+                        {displayDate(item)}
+                      </span>
+                    ) : null}
                   </a>
                 </li>
               ))}
@@ -583,10 +635,12 @@ export function LegacyContentDetailPage({
   active,
   crumb,
   item,
+  announcements,
 }: {
   active: "announcement" | "memory" | "education";
   crumb: string;
   item: ContentItem;
+  announcements?: ContentItem[];
 }) {
   const image = item.image?.fullSrc || itemImage(item);
   const sidebarTitle =
@@ -597,7 +651,7 @@ export function LegacyContentDetailPage({
         : "教育基金/校友贡献";
   const sidebarItems =
     active === "announcement"
-      ? siteData.announcements.slice(0, 5)
+      ? featuredAnnouncements(announcements || siteData.announcements)
       : active === "memory"
         ? siteData.memories.slice(0, 5)
         : siteData.contributions.slice(0, 5);
@@ -626,9 +680,17 @@ export function LegacyContentDetailPage({
                 ) : null}
                 <div className="cont pt-40">
                   <h3>{item.title}</h3>
-                  <ul>
-                    {displayDate(item) ? <li>{displayDate(item)}</li> : null}
-                    {item.fields.category ? <li>{String(item.fields.category)}</li> : null}
+                  <ul className={active === "announcement" ? "legacy-announcement-meta" : undefined}>
+                    {displayDate(item) ? (
+                      <li className={active === "announcement" ? "legacy-announcement-accent" : undefined}>
+                        {displayDate(item)}
+                      </li>
+                    ) : null}
+                    {item.fields.category ? (
+                      <li className={active === "announcement" ? "legacy-announcement-accent" : undefined}>
+                        {String(item.fields.category)}
+                      </li>
+                    ) : null}
                     {item.fields.venue ? <li>{String(item.fields.venue)}</li> : null}
                   </ul>
                   {item.excerpt ? <p className="legacy-excerpt">{item.excerpt}</p> : null}
@@ -647,8 +709,10 @@ export function LegacyContentDetailPage({
               <LegacySidebar
                 title={sidebarTitle}
                 items={sidebarItems}
+                categoryItems={active === "announcement" ? announcements || siteData.announcements : undefined}
                 basePath={sidebarBasePath}
                 categoryTitle="类别分类"
+                highlightAnnouncementMeta={active === "announcement"}
               />
             </div>
           </div>

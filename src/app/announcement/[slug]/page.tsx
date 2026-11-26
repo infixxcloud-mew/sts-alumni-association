@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { LegacyContentDetailPage } from "@/components/legacy/legacy-list-pages";
-import { getPublishedCmsContentBySlug } from "@/lib/cms-data";
+import { getPublishedCmsContent, getPublishedCmsContentBySlug, mergeCmsFirst } from "@/lib/cms-data";
 import { getContentBySlug, siteData } from "@/lib/site-data";
 
 export function generateStaticParams() {
@@ -27,10 +27,20 @@ export default async function AnnouncementDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const item =
-    getContentBySlug(siteData.announcements, slug) ||
-    (await getPublishedCmsContentBySlug("announcement", slug));
+  const [cmsAnnouncements, cmsItem] = await Promise.all([
+    getPublishedCmsContent("announcement"),
+    getPublishedCmsContentBySlug("announcement", slug),
+  ]);
+  const announcements = mergeCmsFirst(cmsAnnouncements, siteData.announcements);
+  const item = cmsItem || getContentBySlug(siteData.announcements, slug);
   if (!item) notFound();
 
-  return <LegacyContentDetailPage active="announcement" crumb="通告" item={item} />;
+  return (
+    <LegacyContentDetailPage
+      active="announcement"
+      crumb="通告"
+      item={item}
+      announcements={announcements}
+    />
+  );
 }

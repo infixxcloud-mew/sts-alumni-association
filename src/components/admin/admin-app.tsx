@@ -69,6 +69,7 @@ type AdminContent = {
   venue: string | null;
   cover_media_id: string | null;
   is_published: boolean;
+  is_featured: boolean;
   sort_order: number | null;
   created_at: string | null;
   updated_at: string | null;
@@ -88,6 +89,7 @@ type ContentForm = {
   cover_media_id: string;
   coverUrl: string;
   is_published: boolean;
+  is_featured: boolean;
   sort_order: string;
 };
 
@@ -122,6 +124,7 @@ function emptyContentForm(type: ContentType): ContentForm {
     cover_media_id: "",
     coverUrl: "",
     is_published: false,
+    is_featured: false,
     sort_order: "0",
   };
 }
@@ -514,7 +517,7 @@ export function AdminApp() {
           supabase
             .from("cms_content")
             .select(
-              "id,type,slug,title,excerpt,body,display_date,category,venue,cover_media_id,is_published,sort_order,created_at,updated_at",
+              "id,type,slug,title,excerpt,body,display_date,category,venue,cover_media_id,is_published,is_featured,sort_order,created_at,updated_at",
             )
             .order("sort_order", { ascending: true })
             .order("created_at", { ascending: false }),
@@ -731,6 +734,7 @@ function ContentManager({
       cover_media_id: item.cover_media_id || "",
       coverUrl: item.cover?.public_url || "",
       is_published: item.is_published,
+      is_featured: item.is_featured,
       sort_order: String(item.sort_order || 0),
     });
     setCoverFile(null);
@@ -777,6 +781,7 @@ function ContentManager({
         venue: form.venue.trim(),
         cover_media_id: coverMediaId,
         is_published: form.is_published,
+        is_featured: type === "announcement" && form.is_featured,
         sort_order: parseSortOrder(form.sort_order),
       };
 
@@ -878,6 +883,22 @@ function ContentManager({
             发布
           </label>
         </div>
+
+        {type === "announcement" ? (
+          <label className="inline-flex items-center gap-2 text-sm font-medium text-stone-700">
+            <input
+              type="checkbox"
+              checked={form.is_featured}
+              onChange={(event) =>
+                setForm((current) => ({
+                  ...current,
+                  is_featured: event.target.checked,
+                }))
+              }
+            />
+            显示在重点更新
+          </label>
+        ) : null}
 
         <div className="grid gap-4 lg:grid-cols-2">
           <Field label="标题">

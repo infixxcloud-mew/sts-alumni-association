@@ -48,6 +48,7 @@ type CmsContentRow = {
   category: string | null;
   venue: string | null;
   cover_media_id: string | null;
+  is_featured: boolean;
   sort_order: number | null;
   created_at: string | null;
   updated_at: string | null;
@@ -253,6 +254,7 @@ function contentFromRow(
       displayDate,
       category: row.category || "",
       venue: row.venue || "",
+      isFeatured: row.is_featured,
       sortOrder: row.sort_order || 0,
     },
     meta: {
@@ -310,7 +312,7 @@ export async function getPublishedCmsContent(type: CmsContentType) {
     const { data, error } = await client
       .from("cms_content")
       .select(
-        "id,type,slug,title,excerpt,body,display_date,category,venue,cover_media_id,sort_order,created_at,updated_at",
+        "id,type,slug,title,excerpt,body,display_date,category,venue,cover_media_id,is_featured,sort_order,created_at,updated_at",
       )
       .eq("type", type)
       .eq("is_published", true)
@@ -331,7 +333,7 @@ export async function getPublishedCmsContentBySlug(
     const { data, error } = await client
       .from("cms_content")
       .select(
-        "id,type,slug,title,excerpt,body,display_date,category,venue,cover_media_id,sort_order,created_at,updated_at",
+        "id,type,slug,title,excerpt,body,display_date,category,venue,cover_media_id,is_featured,sort_order,created_at,updated_at",
       )
       .eq("type", type)
       .eq("slug", decoded)

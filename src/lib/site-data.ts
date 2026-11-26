@@ -50,7 +50,7 @@ export type ContentItem = {
   contentHtml: string;
   text: string;
   image: MediaItem | null;
-  fields: Record<string, string | number>;
+  fields: Record<string, string | number | boolean>;
   meta: Record<string, unknown>;
 };
 

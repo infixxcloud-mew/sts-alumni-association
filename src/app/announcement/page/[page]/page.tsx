@@ -1,5 +1,6 @@
 import { LegacyAnnouncementListPage } from "@/components/legacy/legacy-list-pages";
 import { getPublishedCmsContent, mergeCmsFirst } from "@/lib/cms-data";
+import { filterAnnouncements, firstSearchParam } from "@/lib/announcement-filter";
 import { siteData } from "@/lib/site-data";
 
 export const metadata = {
@@ -8,15 +9,29 @@ export const metadata = {
 
 export default async function AnnouncementPaginationPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ page: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const [{ page }, cmsAnnouncements] = await Promise.all([
+  const [{ page }, query, cmsAnnouncements] = await Promise.all([
     params,
+    searchParams,
     getPublishedCmsContent("announcement"),
   ]);
-  const announcements = mergeCmsFirst(cmsAnnouncements, siteData.announcements);
+  const allAnnouncements = mergeCmsFirst(cmsAnnouncements, siteData.announcements);
+  const category = firstSearchParam(query.cat_);
+  const keyword = firstSearchParam(query.keyword_search);
+  const announcements = filterAnnouncements(allAnnouncements, { category, keyword });
   const pageNumber = Number.parseInt(page, 10);
 
-  return <LegacyAnnouncementListPage announcements={announcements} page={pageNumber} />;
+  return (
+    <LegacyAnnouncementListPage
+      announcements={announcements}
+      allAnnouncements={allAnnouncements}
+      category={category}
+      keyword={keyword}
+      page={pageNumber}
+    />
+  );
 }

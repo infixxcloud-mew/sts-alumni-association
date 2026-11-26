@@ -61,12 +61,16 @@ create table if not exists public.cms_content (
   venue text not null default '',
   cover_media_id uuid references public.cms_media(id) on delete set null,
   is_published boolean not null default false,
+  is_featured boolean not null default false,
   sort_order integer not null default 0,
   created_by uuid references auth.users(id) on delete set null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (type, slug)
 );
+
+alter table public.cms_content
+  add column if not exists is_featured boolean not null default false;
 
 create or replace function public.set_updated_at()
 returns trigger
