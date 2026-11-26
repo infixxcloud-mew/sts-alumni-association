@@ -365,11 +365,15 @@ body {
   height: 100%;
 }
 
-.legacy-site .legacy-album-intro {
+.legacy-site .legacy-album-layout {
   margin-left: auto;
   margin-right: auto;
-  max-width: 850px;
-  text-align: center;
+  max-width: 950px;
+}
+
+.legacy-site .legacy-album-intro {
+  max-width: none;
+  text-align: left;
 }
 
 .legacy-site .legacy-album-detail-cover {
@@ -395,9 +399,9 @@ body {
 }
 
 .legacy-site .legacy-album-intro .legacy-album-description {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 720px;
+  margin-left: 0;
+  margin-right: 0;
+  max-width: none;
 }
 
 .legacy-site .legacy-memory-page .event-cont > span,

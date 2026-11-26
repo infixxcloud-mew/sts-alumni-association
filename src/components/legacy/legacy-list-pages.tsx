@@ -264,67 +264,69 @@ export function LegacyAlbumDetailPage({ album }: { album: Album }) {
       <LegacyPageBanner title={album.title} crumb="相册" />
       <section id="corses-singel" className="pt-90 pb-120 gray-bg">
         <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="corses-singel-left legacy-album-intro mt-30">
-                {cover ? (
-                  <div className="legacy-detail-cover legacy-album-detail-cover">
-                    <Image
-                      src={cover}
-                      alt={album.title}
-                      width={850}
-                      height={560}
-                      sizes="(max-width: 991px) 100vw, 66vw"
-                      priority
-                    />
+          <div className="legacy-album-layout">
+            <div className="row">
+              <div className="col-lg-12">
+                <div className="corses-singel-left legacy-album-intro mt-30">
+                  {cover ? (
+                    <div className="legacy-detail-cover legacy-album-detail-cover">
+                      <Image
+                        src={cover}
+                        alt={album.title}
+                        width={850}
+                        height={560}
+                        sizes="(max-width: 991px) 100vw, 66vw"
+                        priority
+                      />
+                    </div>
+                  ) : null}
+
+                  <div className="title pt-40">
+                    <h3>{album.title}</h3>
                   </div>
-                ) : null}
+                  <div className="course-terms">
+                    <ul>
+                      {album.eventDate || album.eventYear ? (
+                        <li>
+                          <div className="course-category">
+                            <h6>{album.eventDate || album.eventYear}</h6>
+                          </div>
+                        </li>
+                      ) : null}
+                    </ul>
+                  </div>
 
-                <div className="title pt-40">
-                  <h3>{album.title}</h3>
+                  {album.description ? <p className="legacy-album-description">{album.description}</p> : null}
                 </div>
-                <div className="course-terms">
-                  <ul>
-                    {album.eventDate || album.eventYear ? (
-                      <li>
-                        <div className="course-category">
-                          <h6>{album.eventDate || album.eventYear}</h6>
-                        </div>
-                      </li>
-                    ) : null}
-                  </ul>
-                </div>
-
-                {album.description ? <p className="legacy-album-description">{album.description}</p> : null}
               </div>
             </div>
-          </div>
 
-          <div className="row pt-40">
-            <div className="col-lg-12">
-              <div className="legacy-photo-grid">
-                {album.photos.map((photo) => {
-                  const src = photo.thumbSrc || photo.fullSrc;
-                  if (!src) return null;
+            <div className="row pt-40">
+              <div className="col-lg-12">
+                <div className="legacy-photo-grid">
+                  {album.photos.map((photo) => {
+                    const src = photo.thumbSrc || photo.fullSrc;
+                    if (!src) return null;
 
-                  return (
-                    <a
-                      href={photo.fullSrc || src}
-                      className="legacy-photo"
-                      data-legacy-lightbox
-                      data-legacy-lightbox-group={`album-${album.id}`}
-                      key={photo.id}
-                    >
-                      <Image
-                        src={src}
-                        alt={photo.alt || photo.title || album.title}
-                        width={270}
-                        height={210}
-                        sizes="(max-width: 767px) 50vw, (max-width: 991px) 33vw, 25vw"
-                      />
-                    </a>
-                  );
-                })}
+                    return (
+                      <a
+                        href={photo.fullSrc || src}
+                        className="legacy-photo"
+                        data-legacy-lightbox
+                        data-legacy-lightbox-group={`album-${album.id}`}
+                        key={photo.id}
+                      >
+                        <Image
+                          src={src}
+                          alt={photo.alt || photo.title || album.title}
+                          width={270}
+                          height={210}
+                          sizes="(max-width: 767px) 50vw, (max-width: 991px) 33vw, 25vw"
+                        />
+                      </a>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
